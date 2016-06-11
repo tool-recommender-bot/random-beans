@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans;
 
 import io.github.benas.randombeans.beans.Human;
@@ -45,7 +44,7 @@ public class FieldDefinitionBuilderTest {
 
     @Test
     public void testFieldDefinitionBuilding() {
-        FieldDefinition fieldDefinition = builder.named(NAME).ofType(TYPE).inClass(CLASS).get();
+        FieldDefinition<?, ?> fieldDefinition = builder.named(NAME).ofType(TYPE).inClass(CLASS).get();
 
         assertThat(fieldDefinition).isNotNull();
         assertThat(fieldDefinition.getName()).isEqualTo(NAME);

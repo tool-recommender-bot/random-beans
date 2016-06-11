@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.randomizers.text;
 
 import io.github.benas.randombeans.randomizers.AbstractRandomizerTest;
@@ -58,7 +57,7 @@ public class CharacterRandomizerTest extends AbstractRandomizerTest<Character> {
 
     @Test
     public void shouldGenerateOnlyAlphabeticLetters() {
-        assertThat(randomizer.getRandomValue()).isGreaterThanOrEqualTo('A').isLessThanOrEqualTo('z');;
+        assertThat(randomizer.getRandomValue()).isGreaterThanOrEqualTo('A').isLessThanOrEqualTo('z');
     }
 
 }

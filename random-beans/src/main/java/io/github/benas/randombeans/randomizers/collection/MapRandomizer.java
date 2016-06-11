@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.randomizers.collection;
 
 import io.github.benas.randombeans.api.Randomizer;
@@ -77,6 +76,9 @@ public class MapRandomizer<K, V> implements Randomizer<Map<K, V>> {
      *
      * @param keyRandomizer   the randomizer for keys
      * @param valueRandomizer the randomizer for values
+     * @param <K>             the type of key elements
+     * @param <V>             the type of value elements
+     * @return a new {@link MapRandomizer}
      */
     public static <K, V> MapRandomizer<K, V> aNewMapRandomizer(final Randomizer<K> keyRandomizer, final Randomizer<V> valueRandomizer) {
         return new MapRandomizer<>(keyRandomizer, valueRandomizer, abs(aNewByteRandomizer().getRandomValue()));
@@ -88,6 +90,9 @@ public class MapRandomizer<K, V> implements Randomizer<Map<K, V>> {
      * @param keyRandomizer   the randomizer for keys
      * @param valueRandomizer the randomizer for values
      * @param nbEntries       the number of entries to generate
+     * @param <K>             the type of key elements
+     * @param <V>             the type of value elements
+     * @return a new {@link MapRandomizer}
      */
     public static <K, V> MapRandomizer<K, V> aNewMapRandomizer(final Randomizer<K> keyRandomizer, final Randomizer<V> valueRandomizer, final int nbEntries) {
         return new MapRandomizer<>(keyRandomizer, valueRandomizer, nbEntries);

@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans;
 
 import java.lang.reflect.Field;
@@ -33,7 +32,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-import static io.github.benas.randombeans.util.Constants.MAX_COLLECTION_SIZE;
 import static io.github.benas.randombeans.util.ReflectionUtils.*;
 
 /**
@@ -54,7 +52,7 @@ class MapPopulator {
 
     @SuppressWarnings("unchecked")
     Map<?, ?> getRandomMap(final Field field, final PopulatorContext context) {
-        int randomSize = enhancedRandom.nextInt(MAX_COLLECTION_SIZE);
+        int randomSize = enhancedRandom.getRandomCollectionSize();
         Class<?> fieldType = field.getType();
         Type fieldGenericType = field.getGenericType();
         Map<Object, Object> map;

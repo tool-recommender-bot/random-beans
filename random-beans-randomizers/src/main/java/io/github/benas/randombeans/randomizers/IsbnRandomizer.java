@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.randomizers;
 
 import io.github.benas.randombeans.api.Randomizer;
@@ -62,6 +61,8 @@ public class IsbnRandomizer extends FakerBasedRandomizer<String> {
 
     /**
      * Create a new {@link IsbnRandomizer}.
+     *
+     * @return a new {@link IsbnRandomizer}
      */
     public static IsbnRandomizer aNewIsbnRandomizer() {
         return new IsbnRandomizer();
@@ -71,6 +72,7 @@ public class IsbnRandomizer extends FakerBasedRandomizer<String> {
      * Create a new {@link IsbnRandomizer}.
      *
      * @param seed the initial seed
+     * @return a new {@link IsbnRandomizer}
      */
     public static IsbnRandomizer aNewIsbnRandomizer(final long seed) {
         return new IsbnRandomizer(seed);
@@ -81,6 +83,7 @@ public class IsbnRandomizer extends FakerBasedRandomizer<String> {
      *
      * @param seed   the initial seed
      * @param locale the locale to use
+     * @return a new {@link IsbnRandomizer}
      */
     public static IsbnRandomizer aNewIsbnRandomizer(final long seed, final Locale locale) {
         return new IsbnRandomizer(seed, locale);

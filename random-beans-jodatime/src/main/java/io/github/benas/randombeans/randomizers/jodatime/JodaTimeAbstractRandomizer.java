@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.randomizers.jodatime;
 
 import io.github.benas.randombeans.api.Randomizer;
@@ -38,19 +37,23 @@ import static io.github.benas.randombeans.util.DateUtils.toDate;
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-abstract class JodaTimeAbstractRandomizer<T> implements Randomizer<T> {
+public abstract class JodaTimeAbstractRandomizer<T> implements Randomizer<T> {
 
     private final DateRangeRandomizer delegate;
 
-    JodaTimeAbstractRandomizer() {
+    protected JodaTimeAbstractRandomizer() {
         delegate = new DateRangeRandomizer(toDate(TEN_YEARS_AGO), toDate(IN_TEN_YEARS));
     }
 
-    JodaTimeAbstractRandomizer(final long seed) {
+    protected JodaTimeAbstractRandomizer(final long seed) {
         delegate = new DateRangeRandomizer(toDate(TEN_YEARS_AGO), toDate(IN_TEN_YEARS), seed);
     }
 
-    Date getRandomDate() {
+    protected JodaTimeAbstractRandomizer(final Date min, final Date max, final long seed) {
+        delegate = new DateRangeRandomizer(min, max, seed);
+    }
+
+    protected Date getRandomDate() {
         return delegate.getRandomValue();
     }
 }

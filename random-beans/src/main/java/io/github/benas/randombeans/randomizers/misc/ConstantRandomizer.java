@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.randomizers.misc;
 
 import io.github.benas.randombeans.api.Randomizer;
@@ -37,6 +36,8 @@ public class ConstantRandomizer<T> implements Randomizer<T> {
 
     /**
      * Create a new {@link ConstantRandomizer}.
+     *
+     * @param value the constant value
      */
     public ConstantRandomizer(T value) {
         this.value = value;
@@ -45,6 +46,8 @@ public class ConstantRandomizer<T> implements Randomizer<T> {
     /**
      * Create a new {@link ConstantRandomizer}.
      *
+     * @param value the constant value
+     * @param <T>   the type of generated elements
      * @return a new {@link ConstantRandomizer}.
      */
     public static <T> ConstantRandomizer<T> aNewConstantRandomizer(final T value) {

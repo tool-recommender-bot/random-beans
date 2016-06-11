@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans;
 
 import io.github.benas.randombeans.api.EnhancedRandom;
@@ -128,4 +127,14 @@ public class EnhancedRandomBuilderTest {
 
         assertThat(actual).isEqualTo(human);
     }
+
+    @Test
+    public void shouldConfigureCollectionSizeFromBuilder() {
+        enhancedRandomBuilder = aNewEnhancedRandomBuilder();
+
+        EnhancedRandom enhancedRandom = enhancedRandomBuilder.maxCollectionSize(42).build();
+
+        assertThat(((EnhancedRandomImpl)enhancedRandom).getRandomCollectionSize()).isBetween(1, 42);
+    }
+
 }

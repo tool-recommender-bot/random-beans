@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,13 +21,9 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans;
 
-import io.github.benas.randombeans.api.EnhancedRandom;
-import io.github.benas.randombeans.api.ObjectGenerationException;
-import io.github.benas.randombeans.api.Randomizer;
-import io.github.benas.randombeans.api.RandomizerRegistry;
+import io.github.benas.randombeans.api.*;
 import io.github.benas.randombeans.randomizers.misc.EnumRandomizer;
 
 import java.lang.reflect.Field;
@@ -45,7 +41,7 @@ import static io.github.benas.randombeans.util.ReflectionUtils.*;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 class EnhancedRandomImpl extends EnhancedRandom {
 
-    private long seed;
+    private EnhancedRandomParameters parameters;
 
     private final FieldPopulator fieldPopulator;
 
@@ -129,7 +125,7 @@ class EnhancedRandomImpl extends EnhancedRandom {
 
     private <T> T randomize(final Class<T> type, final PopulatorContext context) {
         if (isEnumType(type)) {
-            return (T) new EnumRandomizer(type, seed).getRandomValue();
+            return (T) new EnumRandomizer(type, parameters.getSeed()).getRandomValue();
         }
         if (isArrayType(type)) {
             return (T) arrayPopulator.getRandomArray(type, context);
@@ -155,18 +151,15 @@ class EnhancedRandomImpl extends EnhancedRandom {
         }
     }
 
-    /*
-     * Setters for optional parameters
-     */
-
-    public void setScanClasspathForConcreteTypes(final boolean scanClasspathForConcreteTypes) {
-        fieldPopulator.setScanClasspathForConcreteTypes(scanClasspathForConcreteTypes);
-        objectFactory.setScanClasspathForConcreteTypes(scanClasspathForConcreteTypes);
+    int getRandomCollectionSize() {
+        return 1 + nextInt(parameters.getMaxCollectionSize());
     }
 
-    @Override
-    public void setSeed(final long seed) {
-        super.setSeed(seed);
-        this.seed = seed;
+    public void setParameters(EnhancedRandomParameters parameters) {
+        this.parameters = parameters;
+        super.setSeed(parameters.getSeed());
+        fieldPopulator.setScanClasspathForConcreteTypes(parameters.isScanClasspathForConcreteTypes());
+        objectFactory.setScanClasspathForConcreteTypes(parameters.isScanClasspathForConcreteTypes());
     }
+
 }

@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.util;
 
 import java.time.ZonedDateTime;
@@ -44,7 +43,7 @@ public abstract class Constants {
     /**
      * Maximum collection size.
      */
-    public static final byte MAX_COLLECTION_SIZE = Byte.MAX_VALUE;
+    public static final int MAX_COLLECTION_SIZE = Byte.MAX_VALUE;
 
     /**
      * Maximum string size.

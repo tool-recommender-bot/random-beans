@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,26 +21,29 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.randomizers.registry;
 
 import io.github.benas.randombeans.annotation.Priority;
+import io.github.benas.randombeans.annotation.RandomizerArgument;
+import io.github.benas.randombeans.api.EnhancedRandomParameters;
 import io.github.benas.randombeans.api.Randomizer;
 import io.github.benas.randombeans.api.RandomizerRegistry;
+import io.github.benas.randombeans.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A {@link RandomizerRegistry} for fields annotated with {@link io.github.benas.randombeans.annotation.Randomizer}.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-@Priority(-253)
+@Priority(-2)
 public class AnnotationRandomizerRegistry implements RandomizerRegistry {
 
-    private static final Logger LOGGER = Logger.getLogger(AnnotationRandomizerRegistry.class.getName());
+    @Override
+    public void init(EnhancedRandomParameters parameters) {
+        // no op
+    }
 
     /**
      * Set the initial seed for all randomizers of the registry
@@ -63,11 +66,8 @@ public class AnnotationRandomizerRegistry implements RandomizerRegistry {
         if (field.isAnnotationPresent(io.github.benas.randombeans.annotation.Randomizer.class)) {
             io.github.benas.randombeans.annotation.Randomizer randomizer = field.getAnnotation(io.github.benas.randombeans.annotation.Randomizer.class);
             Class<?> type = randomizer.value();
-            try {
-                return (Randomizer<?>) type.newInstance();
-            } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Unable to create an instance of " + type.getName(), e);
-            }
+            RandomizerArgument[] arguments = randomizer.args();
+            return ReflectionUtils.newInstance(type, arguments);
         }
         return null;
     }

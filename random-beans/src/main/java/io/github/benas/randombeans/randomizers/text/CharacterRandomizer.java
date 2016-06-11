@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.randomizers.text;
 
 import io.github.benas.randombeans.randomizers.AbstractRandomizer;
@@ -60,6 +59,7 @@ public class CharacterRandomizer extends AbstractRandomizer<Character> {
     public CharacterRandomizer(final Charset charset) {
         super();
         this.charset = charset;
+        characters = filterLetters(characters);
     }
 
     /**
@@ -81,6 +81,7 @@ public class CharacterRandomizer extends AbstractRandomizer<Character> {
     public CharacterRandomizer(final Charset charset, final long seed) {
         super(seed);
         this.charset = charset;
+        characters = filterLetters(characters);
     }
 
     /**

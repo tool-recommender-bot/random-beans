@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans;
 
 import io.github.benas.randombeans.api.Randomizer;
@@ -61,65 +60,12 @@ class ArrayPopulator {
     }
 
     Object getRandomPrimitiveArray(final Class<?> primitiveType) {
-        int randomSize = abs((byte) enhancedRandom.nextInt());
-        // TODO A bounty will be offered to anybody that comes with a generic template method for that..
-        Randomizer randomizer = randomizerProvider.getRandomizerByType(primitiveType);
-        if (primitiveType.equals(Byte.TYPE)) {
-            byte[] result = new byte[randomSize];
-            for (int index = 0; index < randomSize; index++) {
-                result[index] = (byte) randomizer.getRandomValue();
-            }
-            return result;
+        final int randomSize = abs((byte) enhancedRandom.nextInt());
+        final Randomizer<?> randomizer = randomizerProvider.getRandomizerByType(primitiveType);
+        final Object result = Array.newInstance(primitiveType, randomSize);
+        for (int index = 0; index < randomSize; index++) {
+            Array.set(result, index, randomizer.getRandomValue());
         }
-        if (primitiveType.equals(Short.TYPE)) {
-            short[] result = new short[randomSize];
-            for (int index = 0; index < randomSize; index++) {
-                result[index] = (short) randomizer.getRandomValue();
-            }
-            return result;
-        }
-        if (primitiveType.equals(Integer.TYPE)) {
-            int[] result = new int[randomSize];
-            for (int index = 0; index < randomSize; index++) {
-                result[index] = (int) randomizer.getRandomValue();
-            }
-            return result;
-        }
-        if (primitiveType.equals(Long.TYPE)) {
-            long[] result = new long[randomSize];
-            for (int index = 0; index < randomSize; index++) {
-                result[index] = (long) randomizer.getRandomValue();
-            }
-            return result;
-        }
-        if (primitiveType.equals(Float.TYPE)) {
-            float[] result = new float[randomSize];
-            for (int index = 0; index < randomSize; index++) {
-                result[index] = (float) randomizer.getRandomValue();
-            }
-            return result;
-        }
-        if (primitiveType.equals(Double.TYPE)) {
-            double[] result = new double[randomSize];
-            for (int index = 0; index < randomSize; index++) {
-                result[index] = (double) randomizer.getRandomValue();
-            }
-            return result;
-        }
-        if (primitiveType.equals(Character.TYPE)) {
-            char[] result = new char[randomSize];
-            for (int index = 0; index < randomSize; index++) {
-                result[index] = (char) randomizer.getRandomValue();
-            }
-            return result;
-        }
-        if (primitiveType.equals(Boolean.TYPE)) {
-            boolean[] result = new boolean[randomSize];
-            for (int index = 0; index < randomSize; index++) {
-                result[index] = (boolean) randomizer.getRandomValue();
-            }
-            return result;
-        }
-        return null;
+        return result;
     }
 }

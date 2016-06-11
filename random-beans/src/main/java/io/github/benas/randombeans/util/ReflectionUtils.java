@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,14 +21,18 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.benas.randombeans.annotation.RandomizerArgument;
+import io.github.benas.randombeans.api.ObjectGenerationException;
+import io.github.benas.randombeans.api.Randomizer;
 import lombok.experimental.UtilityClass;
 
 import java.lang.reflect.*;
 import java.util.*;
 
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
@@ -40,10 +44,13 @@ import static java.util.stream.Collectors.toList;
 @UtilityClass
 public class ReflectionUtils {
 
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     /**
      * Get declared fields of a given type.
      *
      * @param type the type to introspect
+     * @param <T>  the actual type to introspect
      * @return list of declared fields
      */
     public static <T> List<Field> getDeclaredFields(T type) {
@@ -105,6 +112,7 @@ public class ReflectionUtils {
      * Check if the type is abstract (either an interface or an abstract class).
      *
      * @param type the type to check
+     * @param <T>  the actual type to check
      * @return true if the type is abstract, false otherwise
      */
     public static <T> boolean isAbstract(final Class<T> type) {
@@ -115,6 +123,7 @@ public class ReflectionUtils {
      * Check if the type is public.
      *
      * @param type the type to check
+     * @param <T>  the actual type to check
      * @return true if the type is public, false otherwise
      */
     public static <T> boolean isPublic(final Class<T> type) {
@@ -228,6 +237,7 @@ public class ReflectionUtils {
      * Searches the classpath for all public concrete subtypes of the given interface or abstract class.
      *
      * @param type to search concrete subtypes of
+     * @param <T>  the actual type to introspect
      * @return a list of all concrete subtypes found
      */
     public static <T> List<Class<?>> getPublicConcreteSubTypesOf(final Class<T> type) {
@@ -265,4 +275,50 @@ public class ReflectionUtils {
         return actualTypeArguments;
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> Randomizer<T> newInstance(final Class<T> type, final RandomizerArgument[] randomizerArguments) {
+        try {
+            if (notEmpty(randomizerArguments)) {
+                Optional<Constructor<?>> matchingConstructor = asList(type.getConstructors())
+                        .stream()
+                        .filter(constructor -> hasSameArgumentNumber(constructor, randomizerArguments) &&
+                                hasSameArgumentTypes(constructor, randomizerArguments))
+                        .findFirst();
+                if (matchingConstructor.isPresent()) {
+                    return (Randomizer<T>) matchingConstructor.get().newInstance(convertArguments(randomizerArguments));
+                }
+            }
+            return (Randomizer<T>) type.newInstance();
+        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            throw new ObjectGenerationException(format("Could not create Randomizer of type: %s with constructor arguments: %s", type, Arrays.toString(randomizerArguments)), e);
+        }
+    }
+
+    private static boolean notEmpty(final RandomizerArgument[] randomizerArguments) {
+        return randomizerArguments != null && randomizerArguments.length > 0;
+    }
+
+    private static boolean hasSameArgumentNumber(final Constructor<?> constructor, final RandomizerArgument[] randomizerArguments) {
+        return constructor.getParameterCount() == randomizerArguments.length;
+    }
+
+    private static boolean hasSameArgumentTypes(final Constructor<?> constructor, final RandomizerArgument[] randomizerArguments) {
+        Class<?>[] constructorParameterTypes = constructor.getParameterTypes();
+        for (int i = 0; i < randomizerArguments.length; i++) {
+            if (!constructorParameterTypes[i].isAssignableFrom(randomizerArguments[i].type())) {
+                // Argument types does not match
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static Object[] convertArguments(final RandomizerArgument[] declaredArguments) {
+        int numberOfArguments = declaredArguments.length;
+        Object[] arguments = new Object[numberOfArguments];
+        for (int i = 0; i < numberOfArguments; i++) {
+            arguments[i] = objectMapper.convertValue(declaredArguments[i].value(), declaredArguments[i].type());
+        }
+        return arguments;
+    }
 }

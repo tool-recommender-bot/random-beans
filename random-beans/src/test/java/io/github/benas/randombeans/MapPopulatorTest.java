@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans;
 
 import org.junit.Before;
@@ -36,7 +35,6 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import static io.github.benas.randombeans.util.Constants.MAX_COLLECTION_SIZE;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -92,7 +90,7 @@ public class MapPopulatorTest {
     @Test
     public void typedInterfaceMapTypesMightBePopulated() throws Exception {
         // Given
-        when(enhancedRandom.nextInt(MAX_COLLECTION_SIZE)).thenReturn(SIZE);
+        when(enhancedRandom.getRandomCollectionSize()).thenReturn(SIZE);
         when(enhancedRandom.doPopulateBean(String.class, context)).thenReturn(FOO, BAR);
         Field field = Foo.class.getDeclaredField("typedMap");
 
@@ -106,7 +104,7 @@ public class MapPopulatorTest {
     @Test
     public void typedConcreteMapTypesMightBePopulated() throws Exception {
         // Given
-        when(enhancedRandom.nextInt(MAX_COLLECTION_SIZE)).thenReturn(SIZE);
+        when(enhancedRandom.getRandomCollectionSize()).thenReturn(SIZE);
         when(enhancedRandom.doPopulateBean(String.class, context)).thenReturn(FOO, BAR);
         Field field = Foo.class.getDeclaredField("typedConcreteMap");
 

@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.randomizers.collection;
 
 import io.github.benas.randombeans.api.Randomizer;
@@ -60,6 +59,8 @@ public class QueueRandomizer<T> extends CollectionRandomizer<T> {
      * Create a new {@link QueueRandomizer} that will generate a queue with a random number of elements.
      *
      * @param delegate the delegate {@link Randomizer} used to generate elements
+     * @param <T>      the type of elements
+     * @return a new {@link QueueRandomizer}
      */
     public static <T> QueueRandomizer<T> aNewQueueRandomizer(final Randomizer<T> delegate) {
         return new QueueRandomizer<>(delegate);
@@ -70,6 +71,8 @@ public class QueueRandomizer<T> extends CollectionRandomizer<T> {
      *
      * @param delegate   The delegate {@link Randomizer} used to generate elements
      * @param nbElements The number of elements to generate
+     * @param <T>        the type of elements
+     * @return a new {@link QueueRandomizer}
      */
     public static <T> QueueRandomizer<T> aNewQueueRandomizer(final Randomizer<T> delegate, final int nbElements) {
         return new QueueRandomizer<>(delegate, nbElements);

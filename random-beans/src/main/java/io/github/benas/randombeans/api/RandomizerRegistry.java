@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.api;
 
 import java.lang.reflect.Field;
@@ -34,10 +33,19 @@ import java.lang.reflect.Field;
 public interface RandomizerRegistry {
 
     /**
+     * Initialize the registry.
+     *
+     * @param parameters of the {@link EnhancedRandom} instance being configured
+     */
+    void init(EnhancedRandomParameters parameters);
+
+    /**
      * Set the initial seed for all randomizers of the registry
      *
      * @param seed the initial seed
+     * @deprecated use {@link #init(EnhancedRandomParameters parameters)} instead
      */
+    @Deprecated
     void setSeed(final long seed);
 
     /**

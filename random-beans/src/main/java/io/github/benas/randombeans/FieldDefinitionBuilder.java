@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans;
 
 /**
@@ -84,7 +83,7 @@ public class FieldDefinitionBuilder {
      *
      * @return a new {@link FieldDefinition}
      */
-    public FieldDefinition get() {
+    public FieldDefinition<?, ?> get() {
         checkArguments();
         return new FieldDefinition<>(name, type, clazz);
     }

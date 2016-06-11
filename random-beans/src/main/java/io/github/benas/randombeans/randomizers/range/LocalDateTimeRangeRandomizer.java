@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.randomizers.range;
 
 import java.time.LocalDate;
@@ -35,9 +34,9 @@ import java.time.LocalTime;
  */
 public class LocalDateTimeRangeRandomizer extends AbstractRangeRandomizer<LocalDateTime> {
 
-    private LocalDateRangeRandomizer localDateRangeRandomizer;
+    private final LocalDateRangeRandomizer localDateRangeRandomizer;
 
-    private LocalTimeRangeRandomizer localTimeRangeRandomizer;
+    private final LocalTimeRangeRandomizer localTimeRangeRandomizer;
 
     /**
      * Create a new {@link LocalDateTimeRangeRandomizer}.

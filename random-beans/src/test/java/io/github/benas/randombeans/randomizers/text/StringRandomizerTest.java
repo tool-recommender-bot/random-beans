@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.randomizers.text;
 
 import io.github.benas.randombeans.randomizers.AbstractRandomizerTest;
@@ -47,7 +46,7 @@ public class StringRandomizerTest extends AbstractRandomizerTest<String> {
     public void shouldGenerateTheSameValueForTheSameSeed() {
         // Given
         randomizer = aNewStringRandomizer(SEED);
-        String expected = "eOMtThyhVNLWUZNRcBaQKxIyedUsFwdk";
+        String expected = "eOMtThyhVNLWUZNRcBaQKxIy";
 
         // When
         String actual = randomizer.getRandomValue();
@@ -57,17 +56,18 @@ public class StringRandomizerTest extends AbstractRandomizerTest<String> {
     }
 
     @Test
-    public void generatedValueShouldHaveTheSpecifiedLength() {
+    public void theLengthOfTheGeneratedValueShouldBeLowerThanTheSpecifiedMaxLength() {
         // Given
-        final int expectedLength = 10;
-        randomizer = aNewStringRandomizer(expectedLength, SEED);
-        String expectedValue = "eOMtThyhVN";
+        final int maxLength = 10;
+        randomizer = aNewStringRandomizer(maxLength, SEED);
+        String expectedValue = "eOM";
 
         // When
         String actual = randomizer.getRandomValue();
 
         // Then
-        assertThat(actual).isEqualTo(expectedValue).hasSize(expectedLength);
+        assertThat(actual).isEqualTo(expectedValue);
+        assertThat(actual.length()).isLessThanOrEqualTo(maxLength);
     }
 
 }

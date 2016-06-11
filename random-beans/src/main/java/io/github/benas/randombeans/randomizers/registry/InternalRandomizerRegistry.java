@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,10 +21,10 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.randomizers.registry;
 
 import io.github.benas.randombeans.annotation.Priority;
+import io.github.benas.randombeans.api.EnhancedRandomParameters;
 import io.github.benas.randombeans.api.Randomizer;
 import io.github.benas.randombeans.api.RandomizerRegistry;
 import io.github.benas.randombeans.randomizers.misc.BooleanRandomizer;
@@ -33,6 +33,8 @@ import io.github.benas.randombeans.randomizers.misc.UUIDRandomizer;
 import io.github.benas.randombeans.randomizers.net.UriRandomizer;
 import io.github.benas.randombeans.randomizers.net.UrlRandomizer;
 import io.github.benas.randombeans.randomizers.number.*;
+import io.github.benas.randombeans.randomizers.range.DateRangeRandomizer;
+import io.github.benas.randombeans.randomizers.range.SqlDateRangeRandomizer;
 import io.github.benas.randombeans.randomizers.text.CharacterRandomizer;
 import io.github.benas.randombeans.randomizers.text.StringRandomizer;
 import io.github.benas.randombeans.randomizers.time.*;
@@ -42,6 +44,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,21 +54,26 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static io.github.benas.randombeans.util.DateUtils.toDate;
+
 /**
  * Registry for Java built-in types.
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-@Priority(-255)
+@Priority(-5)
 public class InternalRandomizerRegistry implements RandomizerRegistry {
 
     private final Map<Class<?>, Randomizer<?>> randomizers = new HashMap<>();
 
     @Override
-    public void setSeed(final long seed) {
-        randomizers.put(String.class, new StringRandomizer(seed));
-        randomizers.put(Character.class, new CharacterRandomizer(seed));
-        randomizers.put(char.class, new CharacterRandomizer(seed));
+    public void init(EnhancedRandomParameters parameters) {
+        long seed = parameters.getSeed();
+        Charset charset = parameters.getCharset();
+        randomizers.put(String.class, new StringRandomizer(charset, parameters.getMaxStringLength(), seed));
+        CharacterRandomizer characterRandomizer = new CharacterRandomizer(charset, seed);
+        randomizers.put(Character.class, characterRandomizer);
+        randomizers.put(char.class, characterRandomizer);
         randomizers.put(Boolean.class, new BooleanRandomizer(seed));
         randomizers.put(boolean.class, new BooleanRandomizer(seed));
         randomizers.put(Byte.class, new ByteRandomizer(seed));
@@ -84,8 +92,10 @@ public class InternalRandomizerRegistry implements RandomizerRegistry {
         randomizers.put(BigDecimal.class, new BigDecimalRandomizer(seed));
         randomizers.put(AtomicLong.class, new AtomicLongRandomizer(seed));
         randomizers.put(AtomicInteger.class, new AtomicIntegerRandomizer(seed));
-        randomizers.put(Date.class, new DateRandomizer(seed));
-        randomizers.put(java.sql.Date.class, new SqlDateRandomizer(seed));
+        Date minDate = toDate(parameters.getDateRange().getMin());
+        Date maxDate = toDate(parameters.getDateRange().getMax());
+        randomizers.put(Date.class, new DateRangeRandomizer(minDate, maxDate, seed));
+        randomizers.put(java.sql.Date.class, new SqlDateRangeRandomizer(new java.sql.Date(minDate.getTime()), new java.sql.Date(maxDate.getTime()), seed));
         randomizers.put(java.sql.Time.class, new SqlTimeRandomizer(seed));
         randomizers.put(java.sql.Timestamp.class, new SqlTimestampRandomizer(seed));
         randomizers.put(Calendar.class, new CalendarRandomizer(seed));
@@ -93,6 +103,11 @@ public class InternalRandomizerRegistry implements RandomizerRegistry {
         randomizers.put(URI.class, new UriRandomizer(seed));
         randomizers.put(Locale.class, new LocaleRandomizer(seed));
         randomizers.put(UUID.class, new UUIDRandomizer(seed));
+    }
+
+    @Override
+    public void setSeed(final long seed) {
+        // no op
     }
 
     @Override

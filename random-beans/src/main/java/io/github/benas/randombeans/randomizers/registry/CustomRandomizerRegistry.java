@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,11 +21,11 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.randomizers.registry;
 
 import io.github.benas.randombeans.FieldDefinition;
 import io.github.benas.randombeans.annotation.Priority;
+import io.github.benas.randombeans.api.EnhancedRandomParameters;
 import io.github.benas.randombeans.api.Randomizer;
 import io.github.benas.randombeans.api.RandomizerRegistry;
 
@@ -38,11 +38,16 @@ import java.util.Map;
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-@Priority(-254)
+@Priority(0)
 public class CustomRandomizerRegistry implements RandomizerRegistry {
 
     private final Map<FieldDefinition<?, ?>, Randomizer<?>> customFieldRandomizersRegistry = new HashMap<>();
     private final Map<Class<?>, Randomizer<?>> customTypeRandomizersRegistry = new HashMap<>();
+
+    @Override
+    public void init(EnhancedRandomParameters parameters) {
+        // no op
+    }
 
     /**
      * Set the initial seed for all randomizers of the registry

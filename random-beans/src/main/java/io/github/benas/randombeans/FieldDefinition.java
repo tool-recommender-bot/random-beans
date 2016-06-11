@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans;
 
 import lombok.Value;
@@ -42,5 +41,16 @@ public class FieldDefinition<T, F> {
 
     private final Class<T> clazz;
 
-
+    /**
+     * Create a new {@link FieldDefinition}.
+     *
+     * @param name  the field name
+     * @param type  the filed type
+     * @param clazz the declaring class type
+     */
+    public FieldDefinition(String name, Class<F> type, Class<T> clazz) {
+        this.name = name;
+        this.type = type;
+        this.clazz = clazz;
+    }
 }

@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans;
 
 import org.junit.Before;
@@ -35,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static io.github.benas.randombeans.util.Constants.MAX_COLLECTION_SIZE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -85,7 +83,7 @@ public class CollectionPopulatorTest {
     @Test
     public void typedInterfaceCollectionTypesMightBePopulated() throws Exception {
         // Given
-        when(enhancedRandom.nextInt(MAX_COLLECTION_SIZE)).thenReturn(SIZE);
+        when(enhancedRandom.getRandomCollectionSize()).thenReturn(SIZE);
         when(enhancedRandom.doPopulateBean(String.class, context)).thenReturn(STRING);
         Field field = Foo.class.getDeclaredField("typedInterfaceList");
 
@@ -100,7 +98,7 @@ public class CollectionPopulatorTest {
     @Test
     public void typedConcreteCollectionTypesMightBePopulated() throws Exception {
         // Given
-        when(enhancedRandom.nextInt(MAX_COLLECTION_SIZE)).thenReturn(SIZE);
+        when(enhancedRandom.getRandomCollectionSize()).thenReturn(SIZE);
         when(enhancedRandom.doPopulateBean(String.class, context)).thenReturn(STRING);
         Field field = Foo.class.getDeclaredField("typedConcreteList");
 

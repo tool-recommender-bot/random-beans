@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.randomizers.range;
 
 import io.github.benas.randombeans.randomizers.AbstractRandomizer;
@@ -32,26 +31,26 @@ import io.github.benas.randombeans.randomizers.AbstractRandomizer;
  * @param <T> the type of objects in the defined range.
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-abstract class AbstractRangeRandomizer<T> extends AbstractRandomizer<T> {
+public abstract class AbstractRangeRandomizer<T> extends AbstractRandomizer<T> {
 
     final T min;
     final T max;
 
-    AbstractRangeRandomizer(final T min, final T max) {
+    protected AbstractRangeRandomizer(final T min, final T max) {
         super();
         this.min = min != null ? min : getDefaultMinValue();
         this.max = max != null ? max : getDefaultMaxValue();
         checkValues();
     }
 
-    AbstractRangeRandomizer(final T min, final T max, final long seed) {
+    protected AbstractRangeRandomizer(final T min, final T max, final long seed) {
         super(seed);
         this.min = min != null ? min : getDefaultMinValue();
         this.max = max != null ? max : getDefaultMaxValue();
         checkValues();
     }
 
-    long nextLong(final long min, final long max) {
+    protected long nextLong(final long min, final long max) {
         long value = min + ((long) (random.nextDouble() * (max - min)));
         if (value < min) {
             return min;

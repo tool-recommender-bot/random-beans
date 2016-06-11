@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.randomizers.misc;
 
 import java.util.Locale;
@@ -30,6 +29,8 @@ import io.github.benas.randombeans.randomizers.AbstractRandomizer;
 
 /**
  * Generate a random {@link Locale}.
+ *
+ * @author Pascal Schumacher (https://github.com/PascalSchumacher)
  */
 public class LocaleRandomizer extends AbstractRandomizer<Locale> {
 

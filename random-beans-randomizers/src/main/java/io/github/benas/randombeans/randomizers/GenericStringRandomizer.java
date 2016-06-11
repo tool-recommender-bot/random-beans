@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans.randomizers;
 
 import io.github.benas.randombeans.api.Randomizer;
@@ -60,6 +59,7 @@ public class GenericStringRandomizer extends FakerBasedRandomizer<String> {
      * Create a new {@link GenericStringRandomizer}.
      *
      * @param words the list of words from which this randomizer will generate random values.
+     * @return a new {@link GenericStringRandomizer}
      */
     public static GenericStringRandomizer aNewGenericStringRandomizer(final String[] words) {
         return new GenericStringRandomizer(words);
@@ -70,6 +70,7 @@ public class GenericStringRandomizer extends FakerBasedRandomizer<String> {
      *
      * @param words the list of words from which this randomizer will generate random values.
      * @param seed  the initial seed
+     * @return a new {@link GenericStringRandomizer}
      */
     public static GenericStringRandomizer aNewGenericStringRandomizer(final String[] words, final long seed) {
         return new GenericStringRandomizer(words, seed);

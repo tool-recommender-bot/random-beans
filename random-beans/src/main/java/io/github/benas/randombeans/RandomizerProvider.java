@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  *
  *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
@@ -21,7 +21,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-
 package io.github.benas.randombeans;
 
 import io.github.benas.randombeans.api.Randomizer;
@@ -71,11 +70,12 @@ class RandomizerProvider {
         return null;
     }
 
+    @FunctionalInterface
     private interface Provider {
         Randomizer<?> getRandomizer(RandomizerRegistry registry);
     }
 
-    private class ByTypeProvider implements Provider {
+    private static class ByTypeProvider implements Provider {
 
         private final Class<?> type;
 
@@ -89,7 +89,7 @@ class RandomizerProvider {
         }
     }
 
-    private class ByFieldProvider implements Provider {
+    private static class ByFieldProvider implements Provider {
 
         private final Field field;
 
