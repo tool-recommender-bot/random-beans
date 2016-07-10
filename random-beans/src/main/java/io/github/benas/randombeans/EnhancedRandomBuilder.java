@@ -27,8 +27,8 @@ import io.github.benas.randombeans.api.EnhancedRandom;
 import io.github.benas.randombeans.api.EnhancedRandomParameters;
 import io.github.benas.randombeans.api.Randomizer;
 import io.github.benas.randombeans.api.RandomizerRegistry;
-import io.github.benas.randombeans.randomizers.misc.SkipRandomizer;
 import io.github.benas.randombeans.randomizers.registry.CustomRandomizerRegistry;
+import io.github.benas.randombeans.randomizers.registry.ExclusionRandomizerRegistry;
 
 import java.nio.charset.Charset;
 import java.time.LocalDate;
@@ -36,7 +36,9 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.function.Supplier;
 
+import static io.github.benas.randombeans.FieldDefinitionBuilder.field;
 import static io.github.benas.randombeans.RandomizerProxy.asRandomizer;
+import static java.lang.String.format;
 
 /**
  * Builder to create {@link EnhancedRandom} instances.
@@ -47,6 +49,8 @@ public class EnhancedRandomBuilder {
 
     private final CustomRandomizerRegistry customRandomizerRegistry;
 
+    private final ExclusionRandomizerRegistry exclusionRandomizerRegistry;
+
     private final Set<RandomizerRegistry> userRegistries;
 
     private EnhancedRandomParameters parameters;
@@ -56,6 +60,7 @@ public class EnhancedRandomBuilder {
      */
     public EnhancedRandomBuilder() {
         customRandomizerRegistry = new CustomRandomizerRegistry();
+        exclusionRandomizerRegistry = new ExclusionRandomizerRegistry();
         userRegistries = new LinkedHashSet<>();
         parameters = new EnhancedRandomParameters();
     }
@@ -72,6 +77,8 @@ public class EnhancedRandomBuilder {
     /**
      * Register a custom randomizer for a given field.
      *
+     * <strong>The field type MUST be provided in the field definition</strong>
+     *
      * @param fieldDefinition definition of the field to randomize
      * @param randomizer      the custom {@link Randomizer} to use
      * @param <T> The target class type
@@ -80,12 +87,18 @@ public class EnhancedRandomBuilder {
      * @return a pre configured {@link EnhancedRandomBuilder} instance
      */
     public <T, F, R> EnhancedRandomBuilder randomize(FieldDefinition<T, F> fieldDefinition, Randomizer<R> randomizer) {
+        if (fieldDefinition.getType() == null) {
+            throw new IllegalArgumentException(format("Ambiguous field definition: %s." +
+                    " Field type is mandatory to register a custom randomizer: %s", fieldDefinition, randomizer));
+        }
         customRandomizerRegistry.registerRandomizer(fieldDefinition, randomizer);
         return this;
     }
 
     /**
      * Register a supplier as randomizer for a given field.
+     *
+     * <strong>The field type MUST be provided in the field definition</strong>
      *
      * @param fieldDefinition definition of the field to randomize
      * @param supplier        the custom {@link Supplier} to use
@@ -134,7 +147,21 @@ public class EnhancedRandomBuilder {
      * @return a pre configured {@link EnhancedRandomBuilder} instance
      */
     public <T, F> EnhancedRandomBuilder exclude(FieldDefinition<T, F> fieldDefinition) {
-        return randomize(fieldDefinition, new SkipRandomizer());
+        exclusionRandomizerRegistry.addFieldDefinition(fieldDefinition);
+        return this;
+    }
+
+    /**
+     * Exclude types from being populated.
+     *
+     * @param types the types to exclude
+     * @return a pre configured {@link EnhancedRandomBuilder} instance
+     */
+    public EnhancedRandomBuilder exclude(Class<?>... types) {
+        for (Class<?> type : types) {
+            exclusionRandomizerRegistry.addFieldDefinition(field().ofType(type).get());
+        }
+        return this;
     }
 
     /**
@@ -231,6 +258,33 @@ public class EnhancedRandomBuilder {
     }
 
     /**
+     * Should default initialization of field values be overridden?
+     * E.g. should the values of the {@code strings} and {@code integers} fields below be kept untouched
+     *  or should they be randomized.
+     * 
+     * <pre>
+     * {@code
+     * public class Bean {
+     *     Set<String> strings = new HashSet<>();
+     *     List<Integer> integers;
+     * 
+     *     public Bean() {
+     *         integers = Arrays.asList(1, 2, 3);
+     *     }
+     * }}
+     * </pre>
+     * 
+     * Deactivated by default.
+     *
+     * @param overrideDefaultInitialization whether to override default initialization of field values or not
+     * @return a pre configured {@link EnhancedRandomBuilder} instance
+     */
+    public EnhancedRandomBuilder overrideDefaultInitialization(boolean overrideDefaultInitialization) {
+        parameters.setOverrideDefaultInitialization(overrideDefaultInitialization);
+        return this;
+    }
+
+    /**
      * Build a {@link EnhancedRandom} instance.
      *
      * @return a configured {@link EnhancedRandom} instance
@@ -248,9 +302,10 @@ public class EnhancedRandomBuilder {
 
     private LinkedHashSet<RandomizerRegistry> setupRandomizerRegistries() {
         LinkedHashSet<RandomizerRegistry> registries = new LinkedHashSet<>();
-        registries.add(customRandomizerRegistry); // programatically registered randomizers through randomize()
-        registries.addAll(userRegistries); // programatically registered registries through registerRandomizerRegistry()
-        registries.addAll(loadRegistries()); // registries added to classpath through the SPI
+        registries.add(customRandomizerRegistry);
+        registries.add(exclusionRandomizerRegistry);
+        registries.addAll(userRegistries);
+        registries.addAll(loadRegistries());
         registries.forEach(registry -> registry.init(parameters));
         return registries;
     }

@@ -43,8 +43,7 @@ public class EnhancedRandomFactoryBeanTest {
         // the enhancedRandom should generate valid instances
         Foo foo = enhancedRandom.nextObject(Foo.class);
 
-        assertThat(foo).isNotNull();
-        assertThat(foo.getName()).isNotEmpty();
+        assertThat(foo).hasNoNullFieldsOrProperties();
     }
 
     @Test
@@ -62,6 +61,8 @@ public class EnhancedRandomFactoryBeanTest {
         assertThat(foo.getName()).isIn(NameRandomizer.NAMES);
         assertThat(foo.getAge()).isEqualTo(10);
         assertThat(foo.getWeight()).isEqualTo(10);
+        assertThat(foo.getBar()).isIn(NameRandomizer.NAMES);
+        assertThat(foo.getNickName().length()).isLessThanOrEqualTo(3);
     }
 
     private EnhancedRandom getEnhancedRandomFromSpringContext(String contextFileName) {

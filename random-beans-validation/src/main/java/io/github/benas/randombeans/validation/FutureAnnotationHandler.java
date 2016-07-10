@@ -21,58 +21,27 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.benas.randombeans.spring;
+package io.github.benas.randombeans.validation;
 
-class Foo {
+import io.github.benas.randombeans.api.Randomizer;
+import io.github.benas.randombeans.randomizers.range.DateRangeRandomizer;
+import io.github.benas.randombeans.util.Constants;
 
-    private String name;
+import java.lang.reflect.Field;
+import java.util.Calendar;
+import java.util.Date;
 
-    private Integer age;
+class FutureAnnotationHandler implements BeanValidationAnnotationHandler {
 
-    private Integer weight;
+    private long seed;
 
-    private String nickName;
-
-    @Deprecated
-    private String bar;
-
-    public String getBar() {
-        return bar;
+    public FutureAnnotationHandler(long seed) {
+        this.seed = seed;
     }
 
-    public void setBar(String bar) {
-        this.bar = bar;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public Integer getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Integer weight) {
-        this.weight = weight;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public Randomizer<?> getRandomizer(Field field) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, Constants.DEFAULT_DATE_RANGE);
+        return new DateRangeRandomizer(new Date(), calendar.getTime(), seed);
     }
 }

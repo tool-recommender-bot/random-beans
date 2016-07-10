@@ -46,7 +46,7 @@ import static java.time.LocalDateTime.of;
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-@Priority(-4)
+@Priority(-3)
 public class TimeRandomizerRegistry implements RandomizerRegistry {
 
     private final Map<Class<?>, Randomizer<?>> randomizers = new HashMap<>();
@@ -73,11 +73,6 @@ public class TimeRandomizerRegistry implements RandomizerRegistry {
         randomizers.put(Year.class, new YearRandomizer(seed));
         randomizers.put(ZonedDateTime.class, new ZonedDateTimeRandomizer(seed));
         randomizers.put(ZoneOffset.class, new ZoneOffsetRandomizer(seed));
-    }
-
-    @Override
-    public void setSeed(long seed) {
-        // no op
     }
 
     @Override

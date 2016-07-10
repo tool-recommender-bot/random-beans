@@ -21,58 +21,15 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.benas.randombeans.spring;
+package io.github.benas.randombeans.validation;
 
-class Foo {
 
-    private String name;
+import io.github.benas.randombeans.api.Randomizer;
 
-    private Integer age;
+import java.lang.reflect.Field;
 
-    private Integer weight;
+interface BeanValidationAnnotationHandler {
 
-    private String nickName;
+    Randomizer<?> getRandomizer(Field field);
 
-    @Deprecated
-    private String bar;
-
-    public String getBar() {
-        return bar;
-    }
-
-    public void setBar(String bar) {
-        this.bar = bar;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public Integer getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Integer weight) {
-        this.weight = weight;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
 }

@@ -54,14 +54,14 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static io.github.benas.randombeans.util.DateUtils.toDate;
+import static java.sql.Date.valueOf;
 
 /**
  * Registry for Java built-in types.
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-@Priority(-5)
+@Priority(-4)
 public class InternalRandomizerRegistry implements RandomizerRegistry {
 
     private final Map<Class<?>, Randomizer<?>> randomizers = new HashMap<>();
@@ -92,8 +92,8 @@ public class InternalRandomizerRegistry implements RandomizerRegistry {
         randomizers.put(BigDecimal.class, new BigDecimalRandomizer(seed));
         randomizers.put(AtomicLong.class, new AtomicLongRandomizer(seed));
         randomizers.put(AtomicInteger.class, new AtomicIntegerRandomizer(seed));
-        Date minDate = toDate(parameters.getDateRange().getMin());
-        Date maxDate = toDate(parameters.getDateRange().getMax());
+        Date minDate = valueOf(parameters.getDateRange().getMin());
+        Date maxDate = valueOf(parameters.getDateRange().getMax());
         randomizers.put(Date.class, new DateRangeRandomizer(minDate, maxDate, seed));
         randomizers.put(java.sql.Date.class, new SqlDateRangeRandomizer(new java.sql.Date(minDate.getTime()), new java.sql.Date(maxDate.getTime()), seed));
         randomizers.put(java.sql.Time.class, new SqlTimeRandomizer(seed));
@@ -103,11 +103,6 @@ public class InternalRandomizerRegistry implements RandomizerRegistry {
         randomizers.put(URI.class, new UriRandomizer(seed));
         randomizers.put(Locale.class, new LocaleRandomizer(seed));
         randomizers.put(UUID.class, new UUIDRandomizer(seed));
-    }
-
-    @Override
-    public void setSeed(final long seed) {
-        // no op
     }
 
     @Override

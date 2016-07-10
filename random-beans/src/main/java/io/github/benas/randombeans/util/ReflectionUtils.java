@@ -30,6 +30,7 @@ import io.github.benas.randombeans.api.Randomizer;
 import lombok.experimental.UtilityClass;
 
 import java.lang.reflect.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static java.lang.String.format;
@@ -44,7 +45,13 @@ import static java.util.stream.Collectors.toList;
 @UtilityClass
 public class ReflectionUtils {
 
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    static {
+        objectMapper.setDateFormat(new SimpleDateFormat(DATE_FORMAT));
+    }
 
     /**
      * Get declared fields of a given type.
@@ -86,6 +93,64 @@ public class ReflectionUtils {
         field.setAccessible(true);
         field.set(object, value);
         field.setAccessible(access);
+    }
+
+    /**
+     * Get the value (accessible or not accessible) of a field of a target object.
+     *
+     * @param object instance to get the field of
+     * @param field  field to get the value of
+     * @throws IllegalAccessException if field can not be accessed
+     */
+    public static Object getFieldValue(final Object object, final Field field) throws IllegalAccessException {
+        boolean access = field.isAccessible();
+        field.setAccessible(true);
+        Object value = field.get(object);
+        field.setAccessible(access);
+        return value;
+    }
+
+    /**
+     * Check if a field has a primitive type and matching default value which is set by the compiler.
+     *
+     * @param object instance to get the field value of
+     * @param field  field to check
+     * @throws IllegalAccessException if field cannot be accessed
+     */
+    public static boolean isPrimitiveFieldWithDefaultValue(final Object object, final Field field) throws IllegalAccessException {
+        Class<?> fieldType = field.getType();
+        if (!fieldType.isPrimitive()) {
+            return false;
+        }
+        Object fieldValue = getFieldValue(object, field);
+        if (fieldValue == null) {
+            return false;
+        }
+        if (fieldType.equals(boolean.class) && (boolean) fieldValue == false) {
+            return true;
+        }
+        if (fieldType.equals(byte.class) && (byte) fieldValue == (byte) 0) {
+            return true;
+        }
+        if (fieldType.equals(short.class) && (short) fieldValue == (short) 0) {
+          return true;
+        }
+        if (fieldType.equals(int.class) && (int) fieldValue == 0) {
+            return true;
+        }
+        if (fieldType.equals(long.class) && (long) fieldValue == 0L) {
+            return true;
+        }
+        if (fieldType.equals(float.class) && (float) fieldValue == 0.0F) {
+            return true;
+        }
+        if (fieldType.equals(double.class) && (double) fieldValue == 0.0D) {
+            return true;
+        }
+        if (fieldType.equals(char.class) && (char) fieldValue == '\u0000') {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -177,7 +242,7 @@ public class ReflectionUtils {
      * @return true if the type is populatable, false otherwise
      */
     public static boolean isPopulatable(final Type type) {
-        return !isWildcardType(type) && !isCollectionType(type);
+        return !isWildcardType(type) && !isTypeVariable(type) && !isCollectionType(type);
     }
 
     /**
@@ -231,6 +296,16 @@ public class ReflectionUtils {
      */
     public static boolean isWildcardType(final Type type) {
         return type instanceof WildcardType;
+    }
+
+    /**
+     * Check if a type is a type variable
+     *
+     * @param type the type to check
+     * @return true if the type is a type variable, false otherwise
+     */
+    public static boolean isTypeVariable(final Type type) {
+        return type instanceof TypeVariable<?>;
     }
 
     /**

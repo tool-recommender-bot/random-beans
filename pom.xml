@@ -33,7 +33,7 @@
 
     <groupId>io.github.benas</groupId>
     <artifactId>random-beans-parent</artifactId>
-    <version>3.2.0-SNAPSHOT</version>
+    <version>3.2.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Random Beans</name>
@@ -45,18 +45,17 @@
         <java.version>1.8</java.version>
         <junit.version>4.12</junit.version>
         <faker.version>0.10</faker.version>
-        <assertj.version>3.4.1</assertj.version>
+        <assertj.version>3.5.1</assertj.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
         <joda-time.version>2.9.4</joda-time.version>
-        <spring-context.version>4.2.6.RELEASE</spring-context.version>
+        <spring-context.version>4.3.1.RELEASE</spring-context.version>
         <objenesis.version>2.4</objenesis.version>
-        <fast-classpath-scanner.version>1.9.19</fast-classpath-scanner.version>
+        <fast-classpath-scanner.version>1.10.4</fast-classpath-scanner.version>
         <hibernate-validator.version>5.2.4.Final</hibernate-validator.version>
         <javax.el.version>2.2.6</javax.el.version>
-        <jackson.version>2.7.4</jackson.version>
+        <jackson.version>2.8.0</jackson.version>
         <mockito-core.version>1.10.19</mockito-core.version>
         <junit-dataprovider.version>1.11.0</junit-dataprovider.version>
-        <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
         <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
         <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
         <maven-cobertura-plugin.version>2.7</maven-cobertura-plugin.version>
@@ -142,6 +141,10 @@
             <url>https://github.com/PascalSchumacher</url>
         </contributor>
         <contributor>
+            <name>Rebecca McQuary</name>
+            <url>https://github.com/rmcquary</url>
+        </contributor>
+        <contributor>
             <name>Vincent Potucek</name>
             <url>https://github.com/punkratz312</url>
         </contributor>
@@ -160,6 +163,11 @@
             <dependency>
                 <groupId>io.github.benas</groupId>
                 <artifactId>random-beans</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.benas</groupId>
+                <artifactId>random-beans-randomizers</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -254,19 +262,6 @@
                         </includes>
                         <reportFormat>html</reportFormat>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${maven-javadoc-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>aggregate</goal>
-                            </goals>
-                            <phase>install</phase>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

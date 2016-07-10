@@ -21,58 +21,41 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.benas.randombeans.spring;
+package io.github.benas.randombeans.randomizers.registry;
 
-class Foo {
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.Set;
 
-    private String name;
+class AbstractRandomizerRegistry {
 
-    private Integer age;
+     /*
+     * If a criteria (name, type, declaring class or present annotations) is not specified (ie is null),
+     * return true to not include it in the combination
+     */
 
-    private Integer weight;
-
-    private String nickName;
-
-    @Deprecated
-    private String bar;
-
-    public String getBar() {
-        return bar;
+    protected boolean hasType(final Field field, final Class<?> type) {
+        return type == null || field.getType().equals(type);
     }
 
-    public void setBar(String bar) {
-        this.bar = bar;
+    protected boolean hasName(final Field field, final String name) {
+        return name == null || field.getName().equals(name);
     }
 
-    public String getName() {
-        return name;
+    protected boolean isDeclaredInClass(final Field field, final Class<?> clazz) {
+        return clazz == null || field.getDeclaringClass().equals(clazz);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    protected boolean isAnnotatedWithOneOf(final Field field, final Set<Class<? extends Annotation>> annotations) {
+        if (annotations.isEmpty()) {
+            return true;
+        }
+        for (Class<? extends Annotation> annotation : annotations) {
+            if (field.isAnnotationPresent(annotation)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public Integer getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Integer weight) {
-        this.weight = weight;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
 }

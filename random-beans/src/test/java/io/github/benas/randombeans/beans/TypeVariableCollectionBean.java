@@ -21,58 +21,20 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.benas.randombeans.spring;
+package io.github.benas.randombeans.beans;
 
-class Foo {
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-    private String name;
+import lombok.Data;
 
-    private Integer age;
+@Data
+public class TypeVariableCollectionBean<T, V> {
 
-    private Integer weight;
-
-    private String nickName;
-
-    @Deprecated
-    private String bar;
-
-    public String getBar() {
-        return bar;
-    }
-
-    public void setBar(String bar) {
-        this.bar = bar;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public Integer getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Integer weight) {
-        this.weight = weight;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
+    private Collection<T> collection;
+    private List<T> list;
+    private Set<T> set;
+    private Map<T, V> map;
 }

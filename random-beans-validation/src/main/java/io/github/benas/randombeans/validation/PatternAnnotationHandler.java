@@ -21,58 +21,30 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.benas.randombeans.spring;
+package io.github.benas.randombeans.validation;
 
-class Foo {
+import io.github.benas.randombeans.api.Randomizer;
+import io.github.benas.randombeans.randomizers.RegularExpressionRandomizer;
 
-    private String name;
+import javax.validation.constraints.Pattern;
+import java.lang.reflect.Field;
 
-    private Integer age;
+class PatternAnnotationHandler implements BeanValidationAnnotationHandler {
 
-    private Integer weight;
+    private long seed;
 
-    private String nickName;
-
-    @Deprecated
-    private String bar;
-
-    public String getBar() {
-        return bar;
+    public PatternAnnotationHandler(long seed) {
+        this.seed = seed;
     }
 
-    public void setBar(String bar) {
-        this.bar = bar;
-    }
+    public Randomizer<?> getRandomizer(Field field) {
+        Class<?> fieldType = field.getType();
+        Pattern patternAnnotation = field.getAnnotation(Pattern.class);
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public Integer getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Integer weight) {
-        this.weight = weight;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+        final String regex = patternAnnotation.regexp();
+        if (fieldType.equals(String.class)) {
+            return new RegularExpressionRandomizer(regex, seed);
+        }
+        return null;
     }
 }

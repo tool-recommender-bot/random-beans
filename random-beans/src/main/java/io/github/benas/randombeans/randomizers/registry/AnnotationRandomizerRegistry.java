@@ -37,21 +37,11 @@ import java.lang.reflect.Field;
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
-@Priority(-2)
+@Priority(-1)
 public class AnnotationRandomizerRegistry implements RandomizerRegistry {
 
     @Override
     public void init(EnhancedRandomParameters parameters) {
-        // no op
-    }
-
-    /**
-     * Set the initial seed for all randomizers of the registry
-     *
-     * @param seed the initial seed
-     */
-    @Override
-    public void setSeed(long seed) {
         // no op
     }
 

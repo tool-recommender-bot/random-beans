@@ -29,6 +29,8 @@ import io.github.benas.randombeans.api.Randomizer;
 import io.github.benas.randombeans.beans.*;
 import io.github.benas.randombeans.randomizers.misc.ConstantRandomizer;
 import io.github.benas.randombeans.util.ReflectionUtils;
+import lombok.Data;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -51,8 +53,8 @@ import static io.github.benas.randombeans.FieldDefinitionBuilder.field;
 import static io.github.benas.randombeans.api.EnhancedRandom.*;
 import static io.github.benas.randombeans.util.CharacterUtils.collectPrintableCharactersOf;
 import static io.github.benas.randombeans.util.CharacterUtils.filterLetters;
-import static io.github.benas.randombeans.util.DateUtils.toDate;
-import static java.time.LocalDate.of;
+import static java.sql.Timestamp.valueOf;
+import static java.time.LocalDateTime.of;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -133,9 +135,7 @@ public class EnhancedRandomImplTest {
     @Test
     public void immutableBeansShouldBePopulated() {
         final ImmutableBean immutableBean = enhancedRandom.nextObject(ImmutableBean.class);
-        assertThat(immutableBean).isNotNull();
-        assertThat(immutableBean.getFinalValue()).isNotNull();
-        assertThat(immutableBean.getFinalCollection()).isNotNull();
+        assertThat(immutableBean).hasNoNullFieldsOrProperties();
     }
 
     @Test
@@ -180,15 +180,21 @@ public class EnhancedRandomImplTest {
         assertThat(human.getName()).isEqualTo("name");
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void ambiguousFieldDefinitionShouldBeRejected() {
+        enhancedRandom = aNewEnhancedRandomBuilder()
+                .randomize(field().named("name").get(), new ConstantRandomizer<>("name"))
+                .build();
+
+        enhancedRandom.nextObject(Person.class);
+    }
+
     @Test
     public void javaNetTypesShouldBePopulated() {
 
         Website website = enhancedRandom.nextObject(Website.class);
 
-        assertThat(website).isNotNull();
-        assertThat(website.getName()).isNotNull();
-        assertThat(website.getUri()).isNotNull();
-        assertThat(website.getUrl()).isNotNull();
+        assertThat(website).hasNoNullFieldsOrProperties();
     }
 
     @Test(expected = ObjectGenerationException.class)
@@ -333,6 +339,52 @@ public class EnhancedRandomImplTest {
     }
 
     @Test
+    public void shouldNotOverrideDefaultFieldValuesByDefault() {
+        // When
+        BeanWithDefaultFieldValues bean = random(BeanWithDefaultFieldValues.class);
+
+        // Then
+        assertThat(bean.getDefaultNonNullValue()).isEqualTo("default");
+        assertThat(bean.getDefaultNonNullValueSetByConstructor()).isEqualTo("defaultSetByConstructor");
+    }
+
+    @Test
+    public void whenOverrideDefaultInitializationParameterIsFalse_thenShouldKeepDefaultFieldValues() {
+        // Given
+        enhancedRandom = aNewEnhancedRandomBuilder().overrideDefaultInitialization(false).build();
+
+        // When
+        BeanWithDefaultFieldValues bean = enhancedRandom.nextObject(BeanWithDefaultFieldValues.class);
+
+        // Then
+        assertThat(bean.getDefaultNonNullValue()).isEqualTo("default");
+        assertThat(bean.getDefaultNonNullValueSetByConstructor()).isEqualTo("defaultSetByConstructor");
+    }
+
+    @Test
+    public void whenOverrideDefaultInitializationParameterIsTrue_thenShouldRandomizeFields() {
+        // Given
+        enhancedRandom = aNewEnhancedRandomBuilder().overrideDefaultInitialization(true).build();
+
+        // When
+        BeanWithDefaultFieldValues bean = enhancedRandom.nextObject(BeanWithDefaultFieldValues.class);
+
+        // Then
+        assertThat(bean.getDefaultNonNullValue()).isNotEqualTo("default").isNotNull();
+        assertThat(bean.getDefaultNonNullValueSetByConstructor()).isNotEqualTo("defaultSetByConstructor").isNotNull();
+    }
+
+    @Data
+    public static class BeanWithDefaultFieldValues {
+        private String defaultNonNullValue = "default";
+        private String defaultNonNullValueSetByConstructor;
+
+        public BeanWithDefaultFieldValues() {
+            defaultNonNullValueSetByConstructor = "defaultSetByConstructor";
+        }
+    }
+
+    @Test
     public void testDateRange() throws Exception {
         // Given
         LocalDate minDate = LocalDate.of(2016, 1, 1);
@@ -365,7 +417,7 @@ public class EnhancedRandomImplTest {
     public void annotatedRandomizerArgumentsShouldBeCorrectlyParsed() {
         TestData data = random(TestData.class);
 
-        then(data.getDate()).isBetween(toDate(of(2016, 1, 10)), toDate(of(2016, 1, 30)));
+        then(data.getDate()).isBetween(valueOf(of(2016, 1, 10, 0, 0, 0)), valueOf(of(2016, 1, 30, 23, 59, 59)));
         then(data.getPrice()).isBetween(200, 500);
     }
 
