@@ -128,13 +128,36 @@ public class EnhancedRandomBuilderTest {
         assertThat(actual).isEqualTo(human);
     }
 
+    @Test(expected=IllegalArgumentException.class)
+    public void shouldNotAllowNegativeMinCollectionSize() {
+        enhancedRandomBuilder = aNewEnhancedRandomBuilder();
+
+        enhancedRandomBuilder.minCollectionSize(-1).build();
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void shouldNotAllowMinCollectionSizeGreaterThanMaxCollectionSize() {
+        enhancedRandomBuilder = aNewEnhancedRandomBuilder();
+
+        enhancedRandomBuilder.minCollectionSize(2).maxCollectionSize(1).build();
+    }
+
     @Test
     public void shouldConfigureCollectionSizeFromBuilder() {
         enhancedRandomBuilder = aNewEnhancedRandomBuilder();
 
-        EnhancedRandom enhancedRandom = enhancedRandomBuilder.maxCollectionSize(42).build();
+        EnhancedRandom enhancedRandom = enhancedRandomBuilder.minCollectionSize(41).maxCollectionSize(42).build();
 
-        assertThat(((EnhancedRandomImpl)enhancedRandom).getRandomCollectionSize()).isBetween(1, 42);
+        assertThat(((EnhancedRandomImpl)enhancedRandom).getRandomCollectionSize()).isBetween(41, 42);
+    }
+
+    @Test // https://github.com/benas/random-beans/issues/191
+    public void maxCollectionSizeShouldWorkForArrays() {
+        EnhancedRandom enhancedRandom = aNewEnhancedRandomBuilder().maxCollectionSize(1).build();
+
+        String[] strArr = enhancedRandom.nextObject(String[].class);
+
+        assertThat(strArr.length).isLessThanOrEqualTo(1);
     }
 
     @Test

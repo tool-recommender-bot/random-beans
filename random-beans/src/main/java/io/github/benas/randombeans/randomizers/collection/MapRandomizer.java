@@ -54,7 +54,7 @@ public class MapRandomizer<K, V> implements Randomizer<Map<K, V>> {
      * @param valueRandomizer the randomizer for values
      */
     public MapRandomizer(final Randomizer<K> keyRandomizer, final Randomizer<V> valueRandomizer) {
-        this(keyRandomizer, valueRandomizer, abs(aNewByteRandomizer().getRandomValue()));
+        this(keyRandomizer, valueRandomizer, getRandomSize());
     }
 
     /**
@@ -81,7 +81,7 @@ public class MapRandomizer<K, V> implements Randomizer<Map<K, V>> {
      * @return a new {@link MapRandomizer}
      */
     public static <K, V> MapRandomizer<K, V> aNewMapRandomizer(final Randomizer<K> keyRandomizer, final Randomizer<V> valueRandomizer) {
-        return new MapRandomizer<>(keyRandomizer, valueRandomizer, abs(aNewByteRandomizer().getRandomValue()));
+        return new MapRandomizer<>(keyRandomizer, valueRandomizer, getRandomSize());
     }
 
     /**
@@ -108,9 +108,12 @@ public class MapRandomizer<K, V> implements Randomizer<Map<K, V>> {
     }
 
     private void checkArguments(final int nbEntries) {
-        if (nbEntries < 1) {
-            throw new IllegalArgumentException("The number of entries to generate must be >= 1");
+        if (nbEntries < 0) {
+            throw new IllegalArgumentException("The number of entries to generate must be >= 0");
         }
     }
 
+    private static int getRandomSize() {
+        return abs(aNewByteRandomizer().getRandomValue()) + 1;
+    }
 }

@@ -33,6 +33,7 @@ import java.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 
+import static io.github.benas.randombeans.EnhancedRandomBuilder.aNewEnhancedRandom;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TimeSupportTest {
@@ -41,7 +42,7 @@ public class TimeSupportTest {
 
     @Before
     public void setUp() {
-        enhancedRandom = EnhancedRandomBuilder.aNewEnhancedRandomBuilder().build();
+        enhancedRandom = aNewEnhancedRandom();
     }
 
     @Test
@@ -52,7 +53,6 @@ public class TimeSupportTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     // https://github.com/benas/random-beans/issues/135
     public void threeTenRandomizersCanBeOverridenByCustomRandomizers() {
         EnhancedRandom customEnhancedRandom = EnhancedRandomBuilder.aNewEnhancedRandomBuilder()

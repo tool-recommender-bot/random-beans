@@ -21,14 +21,12 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.benas.randombeans;
+package io.github.benas.randombeans.beans;
 
-import io.github.benas.randombeans.api.Randomizer;
+import lombok.Data;
 
-public class DummyRandomizer implements Randomizer<String> {
+@Data
+public class ClassUsingAbstractEnum {
 
-    @Override
-    public String getRandomValue() {
-        return "foo";
-    }
+    private AbstractEnum testEnum;
 }

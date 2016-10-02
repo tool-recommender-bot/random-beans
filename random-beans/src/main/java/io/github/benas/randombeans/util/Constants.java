@@ -41,14 +41,29 @@ public abstract class Constants {
     private static final ZonedDateTime REFERENCE_DATE = of(2020, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC+1"));
 
     /**
+     * Minimum collection size.
+     */
+    public static final int MIN_COLLECTION_SIZE = 1;
+
+    /**
      * Maximum collection size.
      */
     public static final int MAX_COLLECTION_SIZE = Byte.MAX_VALUE;
 
     /**
+     * Maximum number of different objects to generate for a type.
+     */
+    public static final int MAX_OBJECT_POOL_SIZE = 10;
+
+    /**
      * Maximum string size.
      */
     public static final byte MAX_STRING_LENGTH = 32;
+
+    /**
+     * Minimum string size.
+     */
+    public static final byte MIN_STRING_LENGTH = 1;
 
     /**
      * Default date range in which dates will be generated: [now - 10 years, now + 10 years].

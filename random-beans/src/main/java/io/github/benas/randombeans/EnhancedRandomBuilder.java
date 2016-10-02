@@ -53,7 +53,7 @@ public class EnhancedRandomBuilder {
 
     private final Set<RandomizerRegistry> userRegistries;
 
-    private EnhancedRandomParameters parameters;
+    private final EnhancedRandomParameters parameters;
 
     /**
      * Create a new {@link EnhancedRandomBuilder}.
@@ -72,6 +72,15 @@ public class EnhancedRandomBuilder {
      */
     public static EnhancedRandomBuilder aNewEnhancedRandomBuilder() {
         return new EnhancedRandomBuilder();
+    }
+
+    /**
+     * Create a new {@link EnhancedRandom} instance with default parameters.
+     *
+     * @return a new {@link EnhancedRandom}
+     */
+    public static EnhancedRandom aNewEnhancedRandom() {
+        return new EnhancedRandomBuilder().build();
     }
 
     /**
@@ -176,6 +185,20 @@ public class EnhancedRandomBuilder {
     }
 
     /**
+     * Set the minimum collection size.
+     *
+     * @param minCollectionSize the minimum collection size
+     * @return a pre configured {@link EnhancedRandomBuilder} instance
+     */
+    public EnhancedRandomBuilder minCollectionSize(final int minCollectionSize) {
+        if (minCollectionSize < 0) {
+            throw new IllegalArgumentException("minCollectionSize must be >= 0");
+        }
+        parameters.setMinCollectionSize(minCollectionSize);
+        return this;
+    }
+
+    /**
      * Set the maximum collection size.
      *
      * @param maxCollectionSize the maximum collection size
@@ -194,6 +217,28 @@ public class EnhancedRandomBuilder {
      */
     public EnhancedRandomBuilder maxStringLength(final int maxStringLength) {
         parameters.setMaxStringLength(maxStringLength);
+        return this;
+    }
+
+    /**
+     * Set the minimum string length.
+     *
+     * @param minStringLength the minimum string length
+     * @return a pre configured {@link EnhancedRandomBuilder} instance
+     */
+    public EnhancedRandomBuilder minStringLength(final int minStringLength) {
+        parameters.setMinStringLength(minStringLength);
+        return this;
+    }
+
+    /**
+     * Set the maximum number of different objects to generate for a type.
+     *
+     * @param maxObjectPoolSize the maximum number of objects
+     * @return a pre configured {@link EnhancedRandomBuilder} instance
+     */
+    public EnhancedRandomBuilder maxObjectPoolSize(final int maxObjectPoolSize) {
+        parameters.setMaxObjectPoolSize(maxObjectPoolSize);
         return this;
     }
 
@@ -290,6 +335,12 @@ public class EnhancedRandomBuilder {
      * @return a configured {@link EnhancedRandom} instance
      */
     public EnhancedRandom build() {
+        int minCollectionSize = parameters.getMinCollectionSize();
+        int maxCollectionSize = parameters.getMaxCollectionSize();
+        if (minCollectionSize > maxCollectionSize) {
+            throw new IllegalArgumentException(format("minCollectionSize (%s) must be <= than maxCollectionSize (%s)",
+                    minCollectionSize, maxCollectionSize));
+        }
         LinkedHashSet<RandomizerRegistry> registries = setupRandomizerRegistries();
         return setupEnhancedRandom(registries);
     }

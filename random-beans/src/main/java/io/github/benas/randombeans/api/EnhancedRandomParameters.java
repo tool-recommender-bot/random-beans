@@ -45,9 +45,15 @@ public class EnhancedRandomParameters {
 
     private long seed;
 
+    private int minCollectionSize;
+
     private int maxCollectionSize;
 
     private int maxStringLength;
+
+    private int minStringLength;
+
+    private int maxObjectPoolSize;
 
     private Charset charset;
 
@@ -62,8 +68,11 @@ public class EnhancedRandomParameters {
     public EnhancedRandomParameters() {
         scanClasspathForConcreteTypes = false;
         seed = new Random().nextLong();
+        minCollectionSize = Constants.MIN_COLLECTION_SIZE;
         maxCollectionSize = Constants.MAX_COLLECTION_SIZE;
         maxStringLength = Constants.MAX_STRING_LENGTH;
+        minStringLength = Constants.MIN_STRING_LENGTH;
+        maxObjectPoolSize = Constants.MAX_OBJECT_POOL_SIZE;
         charset = StandardCharsets.US_ASCII;
         overrideDefaultInitialization = false;
         dateRange = new Range<>(TEN_YEARS_AGO.toLocalDate(), IN_TEN_YEARS.toLocalDate());

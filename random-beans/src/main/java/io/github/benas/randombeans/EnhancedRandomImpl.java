@@ -28,7 +28,9 @@ import io.github.benas.randombeans.randomizers.misc.EnumRandomizer;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 import static io.github.benas.randombeans.util.ReflectionUtils.*;
@@ -51,6 +53,8 @@ class EnhancedRandomImpl extends EnhancedRandom {
 
     private final MapPopulator mapPopulator;
 
+    private final Map<Class, EnumRandomizer> enumRandomizersByType;
+
     private final RandomizerProvider randomizerProvider;
 
     private final ObjectFactory objectFactory;
@@ -63,13 +67,14 @@ class EnhancedRandomImpl extends EnhancedRandom {
         arrayPopulator = new ArrayPopulator(this, randomizerProvider);
         collectionPopulator = new CollectionPopulator(this, objectFactory);
         mapPopulator = new MapPopulator(this, objectFactory);
+        enumRandomizersByType = new ConcurrentHashMap<>();
         fieldPopulator = new FieldPopulator(this, randomizerProvider, arrayPopulator, collectionPopulator, mapPopulator);
         fieldExclusionChecker = new FieldExclusionChecker();
     }
 
     @Override
     public <T> T nextObject(final Class<T> type, final String... excludedFields) {
-        return doPopulateBean(type, new PopulatorContext(excludedFields));
+        return doPopulateBean(type, new PopulatorContext(parameters.getMaxObjectPoolSize(), excludedFields));
     }
 
     @Override
@@ -112,7 +117,8 @@ class EnhancedRandomImpl extends EnhancedRandom {
 
             // retrieve declared and inherited fields
             List<Field> fields = getDeclaredFields(result);
-            fields.addAll(getInheritedFields(type));
+            // we can not use type here, because with classpath scanning enabled the result can be a subtype
+            fields.addAll(getInheritedFields(result.getClass()));
 
             // populate fields with random data
             populateFields(fields, result, context);
@@ -125,7 +131,10 @@ class EnhancedRandomImpl extends EnhancedRandom {
 
     private <T> T randomize(final Class<T> type, final PopulatorContext context) {
         if (isEnumType(type)) {
-            return (T) new EnumRandomizer(type, parameters.getSeed()).getRandomValue();
+            if (!enumRandomizersByType.containsKey(type)) {
+                enumRandomizersByType.put(type, new EnumRandomizer(type, parameters.getSeed()));
+            }
+            return (T) enumRandomizersByType.get(type).getRandomValue();
         }
         if (isArrayType(type)) {
             return (T) arrayPopulator.getRandomArray(type, context);
@@ -155,7 +164,12 @@ class EnhancedRandomImpl extends EnhancedRandom {
     }
 
     int getRandomCollectionSize() {
-        return 1 + nextInt(parameters.getMaxCollectionSize());
+        int minCollectionSize = parameters.getMinCollectionSize();
+        int maxCollectionSize = parameters.getMaxCollectionSize();
+        if (minCollectionSize == maxCollectionSize) {
+            return minCollectionSize;
+        }
+        return nextInt(maxCollectionSize - minCollectionSize) + minCollectionSize;
     }
 
     public void setParameters(EnhancedRandomParameters parameters) {

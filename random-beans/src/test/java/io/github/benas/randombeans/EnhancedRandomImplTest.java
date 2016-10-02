@@ -29,6 +29,7 @@ import io.github.benas.randombeans.api.Randomizer;
 import io.github.benas.randombeans.beans.*;
 import io.github.benas.randombeans.randomizers.misc.ConstantRandomizer;
 import io.github.benas.randombeans.util.ReflectionUtils;
+import java.util.HashSet;
 import lombok.Data;
 
 import org.junit.Before;
@@ -39,6 +40,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
@@ -48,6 +50,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static io.github.benas.randombeans.EnhancedRandomBuilder.aNewEnhancedRandom;
 import static io.github.benas.randombeans.EnhancedRandomBuilder.aNewEnhancedRandomBuilder;
 import static io.github.benas.randombeans.FieldDefinitionBuilder.field;
 import static io.github.benas.randombeans.api.EnhancedRandom.*;
@@ -79,7 +82,7 @@ public class EnhancedRandomImplTest {
 
     @Before
     public void setUp() {
-        enhancedRandom = aNewEnhancedRandomBuilder().build();
+        enhancedRandom = aNewEnhancedRandom();
         when(randomizer.getRandomValue()).thenReturn(FOO);
         when(supplier.get()).thenReturn(FOO);
     }
@@ -224,7 +227,22 @@ public class EnhancedRandomImplTest {
     }
 
     @Test
-    public void whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateConcreteSubTypes() {
+    public void whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateAbstractTypesWithConcreteSubTypes() {
+        // Given
+        enhancedRandom = EnhancedRandomBuilder.aNewEnhancedRandomBuilder().scanClasspathForConcreteTypes(true).build();
+
+        // When
+        Bar bar = enhancedRandom.nextObject(Bar.class);
+
+        // Then
+        assertThat(bar).isNotNull();
+        assertThat(bar).isInstanceOf(ConcreteBar.class);
+        // https://github.com/benas/random-beans/issues/204
+        assertThat(bar.getI()).isNotNull(); 
+    }
+
+    @Test
+    public void whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateFieldsOfAbstractTypeWithConcreteSubTypes() {
         // Given
         enhancedRandom = EnhancedRandomBuilder.aNewEnhancedRandomBuilder().scanClasspathForConcreteTypes(true).build();
 
@@ -235,6 +253,15 @@ public class EnhancedRandomImplTest {
         assertThat(foo).isNotNull();
         assertThat(foo.getBar()).isInstanceOf(ConcreteBar.class);
         assertThat(foo.getBar().getName()).isNotEmpty();
+    }
+
+    @Test
+    public void whenScanClasspathForConcreteTypesIsEnabled_thenShouldPopulateAbstractEnumeration() {
+        EnhancedRandom random = EnhancedRandomBuilder.aNewEnhancedRandomBuilder().scanClasspathForConcreteTypes(true).build();
+
+        ClassUsingAbstractEnum randomValue = random.nextObject(ClassUsingAbstractEnum.class);
+
+        then(randomValue.getTestEnum()).isNotNull();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -251,11 +278,7 @@ public class EnhancedRandomImplTest {
     public void beansWithRecursiveStructureMustNotCauseStackOverflowException() {
         Node node = enhancedRandom.nextObject(Node.class);
 
-        assertThat(node).isNotNull();
-        assertThat(node.getValue()).isNotEmpty();
-        assertThat(node.getLeft()).isNotNull();
-        assertThat(node.getRight()).isNotNull();
-        assertThat(node.getParents()).isNotNull();
+        assertThat(node).hasNoNullFieldsOrProperties();
     }
 
     @Test
@@ -270,7 +293,7 @@ public class EnhancedRandomImplTest {
         // Given
         enhancedRandom = aNewEnhancedRandomBuilder().seed(SEED).build();
 
-        String expectedString = "eOMtThyhVNLWUZNRcBaQKxIy";
+        String expectedString = "eOMtThyhVNLWUZN";
         Person expectedPerson = buildExpectedPerson();
         int[] expectedInts = buildExpectedInts();
 
@@ -309,7 +332,7 @@ public class EnhancedRandomImplTest {
         enhancedRandom = aNewEnhancedRandomBuilder().maxStringLength(maxStringLength).build();
 
         // When
-        Person person = random(Person.class);
+        Person person = enhancedRandom.nextObject(Person.class);
 
         // Then
         assertThat(person.getName().length()).isLessThanOrEqualTo(maxStringLength);
@@ -322,9 +345,45 @@ public class EnhancedRandomImplTest {
     }
 
     @Test
-    public void testCharset() throws Exception {
+    public void testMinStringLength() {
         // Given
-        Charset charset = Charset.forName("UTF-8");
+        int minStringLength = 3;
+        enhancedRandom = aNewEnhancedRandomBuilder().minStringLength(minStringLength).build();
+
+        // When
+        Person person = enhancedRandom.nextObject(Person.class);
+
+        // Then
+        assertThat(person.getName().length()).isGreaterThanOrEqualTo(minStringLength);
+        assertThat(person.getEmail().length()).isGreaterThanOrEqualTo(minStringLength);
+        assertThat(person.getPhoneNumber().length()).isGreaterThanOrEqualTo(minStringLength);
+        assertThat(person.getAddress().getCity().length()).isGreaterThanOrEqualTo(minStringLength);
+        assertThat(person.getAddress().getCountry().length()).isGreaterThanOrEqualTo(minStringLength);
+        assertThat(person.getAddress().getZipCode().length()).isGreaterThanOrEqualTo(minStringLength);
+        assertThat(person.getAddress().getStreet().getName().length()).isGreaterThanOrEqualTo(minStringLength);
+    }
+
+    @Data
+    static class PersonTuple {
+        public Person left, right;
+    }
+
+    @Test
+    public void testMaxObjectPoolSize() {
+        // Given
+        enhancedRandom = aNewEnhancedRandomBuilder().maxObjectPoolSize(1).build();
+
+        // When
+        PersonTuple persons = enhancedRandom.nextObject(PersonTuple.class);
+
+        // Then
+        assertThat(persons.left).isSameAs(persons.right);
+    }
+
+    @Test
+    public void testCharset() {
+        // Given
+        Charset charset = StandardCharsets.UTF_8;
         List<Character> letters = filterLetters(collectPrintableCharactersOf(charset));
         enhancedRandom = aNewEnhancedRandomBuilder().charset(charset).build();
 
@@ -385,7 +444,7 @@ public class EnhancedRandomImplTest {
     }
 
     @Test
-    public void testDateRange() throws Exception {
+    public void testDateRange() {
         // Given
         LocalDate minDate = LocalDate.of(2016, 1, 1);
         LocalDate maxDate = LocalDate.of(2016, 1, 31);
@@ -398,9 +457,8 @@ public class EnhancedRandomImplTest {
         assertThat(timeBean.getLocalDate()).isAfterOrEqualTo(minDate).isBeforeOrEqualTo(maxDate);
     }
 
-
     @Test
-    public void testTimeRange() throws Exception {
+    public void testTimeRange() {
         // Given
         LocalTime minTime = LocalTime.of(15, 0, 0);
         LocalTime maxTime = LocalTime.of(18, 0, 0);
@@ -419,6 +477,16 @@ public class EnhancedRandomImplTest {
 
         then(data.getDate()).isBetween(valueOf(of(2016, 1, 10, 0, 0, 0)), valueOf(of(2016, 1, 30, 23, 59, 59)));
         then(data.getPrice()).isBetween(200, 500);
+    }
+
+    @Test
+    public void nextEnumShouldNotAlwaysReturnTheSameValue() {
+        HashSet<TestEnum> distinctEnumBeans = new HashSet<>();
+        for (int i = 0; i < 10; i++) {
+            distinctEnumBeans.add(enhancedRandom.nextObject(TestEnum.class));
+        }
+
+        assertThat(distinctEnumBeans.size()).isGreaterThan(1);
     }
 
     void validatePerson(final Person person) {
@@ -450,7 +518,7 @@ public class EnhancedRandomImplTest {
 
     @Ignore("Dummy test to see possible reasons of randomization failures")
     @Test
-    public void tryToRandomizeAllPublicConcreteTypesInTheClasspath() throws Exception {
+    public void tryToRandomizeAllPublicConcreteTypesInTheClasspath(){
         int success = 0;
         int failure = 0;
         List<Class<?>> publicConcreteTypes = ReflectionUtils.getPublicConcreteSubTypesOf(Object.class);
@@ -475,19 +543,19 @@ public class EnhancedRandomImplTest {
         Person expectedPerson = new Person();
 
         Street street = new Street();
-        street.setName("elQbxeTeQOvaScfqIOOmaaJxkyvRnLRY");
+        street.setName("dkelQbxe");
         street.setNumber(-1188957731);
         street.setType((byte) -35);
 
         Address address = new Address();
-        address.setCity("CBRQDSxVL");
-        address.setCountry("hpfQGTMDYpsBZxvfBoe");
-        address.setZipCode("tGKbgicZaH");
+        address.setCity("fqIOOmaaJxkyvRnLRYtGKbgic");
+        address.setCountry("ZaHCBRQDSxVLhpf");
+        address.setZipCode("TeQOvaSc");
         address.setStreet(street);
 
-        expectedPerson.setName("wCTSeCODYsELoVqtepGSijxlz");
-        expectedPerson.setEmail("edUsFwdk");
-        expectedPerson.setPhoneNumber("ygjbUMaAIKKIkknjWEXJ");
+        expectedPerson.setName("DcSTDyUMJzFCdjUpSfoiHR");
+        expectedPerson.setEmail("RcBaQKxIyedUsFw");
+        expectedPerson.setPhoneNumber("QGTMDYpsBZxv");
         expectedPerson.setGender(Gender.FEMALE);
         expectedPerson.setAddress(address);
 
@@ -508,5 +576,9 @@ public class EnhancedRandomImplTest {
                 -1116321717, -749120929, -251374152, -751402843, -747583833, 1385925969, -2086462186, -918500648,
                 -1743430693, -1618968583, 980431507, 1514579611, 1302100274, 724999798, -1309772554, -1143448117,
                 1839376840, 1847876220, -148273579, 1870475320, -1179265442};
+    }
+
+    private enum TestEnum {
+        ONE_THING, ANOTHER_THING, SOMETHING_ELSE;
     }
 }

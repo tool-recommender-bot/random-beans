@@ -37,7 +37,6 @@ import static org.mockito.Mockito.when;
 public class ArrayPopulatorTest {
 
     private static final int INT = 10;
-    private static final char CHAR = 'R';
     private static final String STRING = "FOO";
 
     @Mock
@@ -47,7 +46,7 @@ public class ArrayPopulatorTest {
     @Mock
     private RandomizerProvider randomizerProvider;
     @Mock
-    private Randomizer integerRandomizer, characterRandomizer;
+    private Randomizer integerRandomizer;
 
     private ArrayPopulator arrayPopulator;
 
@@ -55,41 +54,23 @@ public class ArrayPopulatorTest {
     public void setUp() {
         arrayPopulator = new ArrayPopulator(enhancedRandom, randomizerProvider);
         when(enhancedRandom.nextInt()).thenReturn(INT);
+        when(enhancedRandom.getRandomCollectionSize()).thenReturn(INT);
         when(randomizerProvider.getRandomizerByType(Integer.TYPE)).thenReturn(integerRandomizer);
-        when(randomizerProvider.getRandomizerByType(Character.TYPE)).thenReturn(characterRandomizer);
         when(integerRandomizer.getRandomValue()).thenReturn(INT);
-        when(characterRandomizer.getRandomValue()).thenReturn(CHAR);
         when(enhancedRandom.doPopulateBean(String.class, context)).thenReturn(STRING);
     }
 
     @Test
     public void getRandomArray() {
-        Object array = arrayPopulator.getRandomArray(String[].class, context);
+        String[] strings = (String[]) arrayPopulator.getRandomArray(String[].class, context);
 
-        assertThat(array).isInstanceOf(String[].class);
-        String[] strings = (String[]) array;
-        for (String string : strings) {
-            assertThat(string).isEqualTo(STRING);
-        }
+        assertThat(strings).containsOnly(STRING);
     }
 
     @Test
     public void getRandomPrimitiveArray() {
-        Object array = arrayPopulator.getRandomPrimitiveArray(Integer.TYPE);
+        int[] ints = (int[]) arrayPopulator.getRandomPrimitiveArray(Integer.TYPE);
 
-        assertThat(array).isInstanceOf(int[].class);
-        int[] ints = (int[]) array;
-        for (int i : ints) {
-            assertThat(i).isEqualTo(INT);
-        }
-    }
-
-    @Test
-    public void charArraysShouldBeFilledWithOnlyAlphabeticLetters() {
-        char[] chars = (char[]) arrayPopulator.getRandomArray(char[].class, context);
-
-        for (char c : chars) {
-            assertThat(c).isEqualTo(CHAR);
-        }
+        assertThat(ints).containsOnly(INT);
     }
 }

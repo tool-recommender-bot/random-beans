@@ -23,12 +23,21 @@
  */
 package io.github.benas.randombeans.beans;
 
-import lombok.Data;
+public enum AbstractEnum {
+    VAL1() {
 
-@Data
-public abstract class Bar {
+        @Override
+        public String test() {
+            return "1";
+        }
+    },
+    VAL2() {
 
-    private Integer i;
+        @Override
+        public String test() {
+            return "2";
+        }
+    };
 
-    public abstract String getName();
+    public abstract String test();
 }
