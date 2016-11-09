@@ -108,6 +108,23 @@ public class FieldExclusionTest {
     }
 
     @Test
+    public void excludedDottedFieldsWithFieldDefinitionShouldNotBePopulated() {
+        // given
+        enhancedRandom = aNewEnhancedRandomBuilder()
+                .exclude(field().named("street.name").ofType(String.class).inClass(Address.class).get())
+                .build();
+
+        // when
+        Person person = enhancedRandom.nextObject(Person.class);
+
+        // then
+        assertThat(person).isNotNull();
+        assertThat(person.getAddress()).isNotNull();
+        assertThat(person.getAddress().getStreet()).isNotNull();
+        assertThat(person.getAddress().getStreet().getName()).isNull();
+    }
+
+    @Test
     public void fieldsExcludedWithAnnotationShouldNotBePopulated() {
         Person person = enhancedRandom.nextObject(Person.class);
 
