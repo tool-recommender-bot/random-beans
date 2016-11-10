@@ -27,7 +27,7 @@
     <parent>
         <artifactId>random-beans-parent</artifactId>
         <groupId>io.github.benas</groupId>
-        <version>3.3.1-SNAPSHOT</version>
+        <version>3.4.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -80,7 +80,9 @@
         <dependency>
             <groupId>com.github.javafaker</groupId>
             <artifactId>javafaker</artifactId>
-            <version>${faker.version}</version>
+            <!-- The "plain" version of javafaker has a dependency that is not in maven central and therefore
+                 not available for user with restrictive policies concerning allowed maven repos. -->
+            <classifier>deps</classifier>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

@@ -23,13 +23,12 @@
  */
 package io.github.benas.randombeans;
 
+import lombok.Data;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import lombok.Data;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -37,7 +36,6 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.when;
@@ -56,7 +54,7 @@ public class MapPopulatorTest {
     private EnhancedRandomImpl enhancedRandom;
 
     private MapPopulator mapPopulator;
-    
+
     @Before
     public void setUp() {
         ObjectFactory objectFactory = new ObjectFactory();
@@ -66,7 +64,6 @@ public class MapPopulatorTest {
     @Test
     public void rawInterfaceMapTypesMustBeGeneratedEmpty() throws Exception {
         // Given
-        when(enhancedRandom.doPopulateBean(Map.class, context)).thenReturn(emptyMap());
         Field field = Foo.class.getDeclaredField("rawMap");
 
         // When
@@ -79,7 +76,6 @@ public class MapPopulatorTest {
     @Test
     public void rawConcreteMapTypesMustBeGeneratedEmpty() throws Exception {
         // Given
-        when(enhancedRandom.doPopulateBean(HashMap.class, context)).thenReturn(new HashMap());
         Field field = Foo.class.getDeclaredField("concreteMap");
 
         // When
@@ -122,6 +118,20 @@ public class MapPopulatorTest {
         Map<?, ?> map = mapPopulator.getEmptyImplementationForMapInterface(SortedMap.class);
 
         assertThat(map).isInstanceOf(TreeMap.class).isEmpty();
+    }
+
+    @Test
+    public void notAddNullKeysToMap() throws NoSuchFieldException {
+        // Given
+        when(enhancedRandom.getRandomCollectionSize()).thenReturn(SIZE);
+        when(enhancedRandom.doPopulateBean(String.class, context)).thenReturn(null);
+        Field field = Foo.class.getDeclaredField("typedConcreteMap");
+
+        // When
+        Map<String, String> randomMap = (Map<String, String>) mapPopulator.getRandomMap(field, context);
+
+        // Then
+        assertThat(randomMap).isEmpty();
     }
 
     @Data
