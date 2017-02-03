@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,7 @@ import io.github.benas.randombeans.randomizers.range.IntegerRangeRandomizer;
 
 import java.time.Year;
 
-import static io.github.benas.randombeans.util.Constants.IN_TEN_YEARS;
-import static io.github.benas.randombeans.util.Constants.TEN_YEARS_AGO;
+import static io.github.benas.randombeans.util.Constants.DEFAULT_DATES_RANGE;
 
 /**
  * A {@link Randomizer} that generates random {@link Year}.
@@ -44,7 +43,7 @@ public class YearRandomizer implements Randomizer<Year> {
      * Create a new {@link YearRandomizer}.
      */
     public YearRandomizer() {
-        yearRandomizer = new IntegerRangeRandomizer(TEN_YEARS_AGO.getYear(), IN_TEN_YEARS.getYear());
+        yearRandomizer = new IntegerRangeRandomizer(DEFAULT_DATES_RANGE.getMin().getYear(), DEFAULT_DATES_RANGE.getMax().getYear());
     }
 
     /**
@@ -53,7 +52,7 @@ public class YearRandomizer implements Randomizer<Year> {
      * @param seed initial seed
      */
     public YearRandomizer(final long seed) {
-        yearRandomizer = new IntegerRangeRandomizer(TEN_YEARS_AGO.getYear(), IN_TEN_YEARS.getYear(), seed);
+        yearRandomizer = new IntegerRangeRandomizer(DEFAULT_DATES_RANGE.getMin().getYear(), DEFAULT_DATES_RANGE.getMax().getYear(), seed);
     }
 
     /**

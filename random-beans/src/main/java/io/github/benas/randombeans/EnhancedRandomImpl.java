@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -74,7 +74,7 @@ class EnhancedRandomImpl extends EnhancedRandom {
 
     @Override
     public <T> T nextObject(final Class<T> type, final String... excludedFields) {
-        return doPopulateBean(type, new PopulatorContext(parameters.getMaxObjectPoolSize(), parameters.getMaxRandomizationDepth(), excludedFields));
+        return doPopulateBean(type, new RandomizationContext(parameters, excludedFields));
     }
 
     @Override
@@ -90,7 +90,7 @@ class EnhancedRandomImpl extends EnhancedRandom {
         return streamBuilder.build();
     }
 
-    <T> T doPopulateBean(final Class<T> type, final PopulatorContext context) {
+    <T> T doPopulateBean(final Class<T> type, final RandomizationContext context) {
         T result;
         try {
 
@@ -105,7 +105,7 @@ class EnhancedRandomImpl extends EnhancedRandom {
             }
 
             // If the type has been already randomized, return one cached instance to avoid recursion.
-            if (context.hasRandomizedType(type)) {
+            if (context.hasAlreadyRandomizedType(type)) {
                 return (T) context.getPopulatedBean(type);
             }
 
@@ -129,7 +129,7 @@ class EnhancedRandomImpl extends EnhancedRandom {
         }
     }
 
-    private <T> T randomize(final Class<T> type, final PopulatorContext context) {
+    private <T> T randomize(final Class<T> type, final RandomizationContext context) {
         if (isEnumType(type)) {
             if (!enumRandomizersByType.containsKey(type)) {
                 enumRandomizersByType.put(type, new EnumRandomizer(type, parameters.getSeed()));
@@ -148,13 +148,13 @@ class EnhancedRandomImpl extends EnhancedRandom {
         return null;
     }
 
-    private <T> void populateFields(final List<Field> fields, final T result, final PopulatorContext context) throws IllegalAccessException {
+    private <T> void populateFields(final List<Field> fields, final T result, final RandomizationContext context) throws IllegalAccessException {
         for (final Field field : fields) {
             populateField(field, result, context);
         }
     }
 
-    private <T> void populateField(final Field field, final T result, final PopulatorContext context) throws IllegalAccessException {
+    private <T> void populateField(final Field field, final T result, final RandomizationContext context) throws IllegalAccessException {
         if (!fieldExclusionChecker.shouldBeExcluded(field, context)) {
             if (!parameters.isOverrideDefaultInitialization() && getFieldValue(result, field) != null && !isPrimitiveFieldWithDefaultValue(result, field)) {
               return;
@@ -164,12 +164,12 @@ class EnhancedRandomImpl extends EnhancedRandom {
     }
 
     int getRandomCollectionSize() {
-        int minCollectionSize = parameters.getMinCollectionSize();
-        int maxCollectionSize = parameters.getMaxCollectionSize();
+        int minCollectionSize = parameters.getCollectionSizeRange().getMin();
+        int maxCollectionSize = parameters.getCollectionSizeRange().getMax();
         if (minCollectionSize == maxCollectionSize) {
             return minCollectionSize;
         }
-        return nextInt(maxCollectionSize - minCollectionSize) + minCollectionSize;
+        return nextInt((maxCollectionSize - minCollectionSize) + 1) + minCollectionSize;
     }
 
     public void setParameters(EnhancedRandomParameters parameters) {

@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@ import java.lang.reflect.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static io.github.benas.randombeans.util.DateUtils.DATE_FORMAT;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -44,8 +45,6 @@ import static java.util.stream.Collectors.toList;
  */
 @UtilityClass
 public class ReflectionUtils {
-
-    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -100,6 +99,7 @@ public class ReflectionUtils {
      *
      * @param object instance to get the field of
      * @param field  field to get the value of
+     * @return the value of the field
      * @throws IllegalAccessException if field can not be accessed
      */
     public static Object getFieldValue(final Object object, final Field field) throws IllegalAccessException {
@@ -115,6 +115,7 @@ public class ReflectionUtils {
      *
      * @param object instance to get the field value of
      * @param field  field to check
+     * @return true if the field is primitive and is set to the default value, false otherwise
      * @throws IllegalAccessException if field cannot be accessed
      */
     public static boolean isPrimitiveFieldWithDefaultValue(final Object object, final Field field) throws IllegalAccessException {

@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -26,11 +26,12 @@ package io.github.benas.randombeans;
 import io.github.benas.randombeans.api.Randomizer;
 import io.github.benas.randombeans.beans.*;
 import io.github.benas.randombeans.randomizers.misc.SkipRandomizer;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -38,7 +39,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.JAXBElement;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -52,7 +56,7 @@ public class FieldPopulatorTest {
     @Mock
     private RandomizerProvider randomizerProvider;
     @Mock
-    private PopulatorContext populatorContext;
+    private RandomizationContext randomizationContext;
     @Mock
     private Randomizer randomizer;
     @Mock
@@ -78,7 +82,7 @@ public class FieldPopulatorTest {
         when(randomizerProvider.getRandomizerByField(name)).thenReturn(randomizer);
 
         // When
-        fieldPopulator.populateField(human, name, populatorContext);
+        fieldPopulator.populateField(human, name, randomizationContext);
 
         // Then
         assertThat(human.getName()).isNull();
@@ -93,7 +97,7 @@ public class FieldPopulatorTest {
         when(randomizer.getRandomValue()).thenReturn(NAME);
 
         // When
-        fieldPopulator.populateField(human, name, populatorContext);
+        fieldPopulator.populateField(human, name, randomizationContext);
 
         // Then
         assertThat(human.getName()).isEqualTo(NAME);
@@ -105,10 +109,10 @@ public class FieldPopulatorTest {
         Field strings = ArrayBean.class.getDeclaredField("strings");
         ArrayBean arrayBean = new ArrayBean();
         String[] object = new String[0];
-        when(arrayPopulator.getRandomArray(strings.getType(), populatorContext)).thenReturn(object);
+        when(arrayPopulator.getRandomArray(strings.getType(), randomizationContext)).thenReturn(object);
 
         // When
-        fieldPopulator.populateField(arrayBean, strings, populatorContext);
+        fieldPopulator.populateField(arrayBean, strings, randomizationContext);
 
         // Then
         assertThat(arrayBean.getStrings()).isEqualTo(object);
@@ -122,7 +126,7 @@ public class FieldPopulatorTest {
         Collection<Person> persons = Collections.emptyList();
 
         // When
-        fieldPopulator.populateField(collectionBean, strings, populatorContext);
+        fieldPopulator.populateField(collectionBean, strings, randomizationContext);
 
         // Then
         assertThat(collectionBean.getTypedCollection()).isEqualTo(persons);
@@ -136,7 +140,7 @@ public class FieldPopulatorTest {
         Map<Integer, Person> idToPerson = new HashMap<>();
 
         // When
-        fieldPopulator.populateField(mapBean, strings, populatorContext);
+        fieldPopulator.populateField(mapBean, strings, randomizationContext);
 
         // Then
         assertThat(mapBean.getTypedMap()).isEqualTo(idToPerson);
@@ -147,12 +151,27 @@ public class FieldPopulatorTest {
         // Given
         Field name = Human.class.getDeclaredField("name");
         Human human = new Human();
-        when(populatorContext.isExceedRandomizationDepth()).thenReturn(true);
+        when(randomizationContext.hasExceededRandomizationDepth()).thenReturn(true);
 
         // When
-        fieldPopulator.populateField(human, name, populatorContext);
+        fieldPopulator.populateField(human, name, randomizationContext);
 
         // Then
         assertThat(human.getName()).isNull();
+    }
+
+    @Test //https://github.com/benas/random-beans/issues/221
+    public void shouldFailWithNiceErrorMessageWhenUnableToCreateFieldValue() throws Exception {
+      // Given
+      FieldPopulator fieldPopulator = new FieldPopulator(new EnhancedRandomImpl(Collections.emptySet()), randomizerProvider, arrayPopulator, collectionPopulator, mapPopulator);
+      Field jaxbElementField = JaxbElementFieldBean.class.getDeclaredField("jaxbElementField");
+      JaxbElementFieldBean jaxbElementFieldBean = new JaxbElementFieldBean();
+
+      thenThrownBy(() -> { fieldPopulator.populateField(jaxbElementFieldBean, jaxbElementField, randomizationContext); })
+          .hasMessage("Unable to create type: javax.xml.bind.JAXBElement for field: jaxbElementField of class: io.github.benas.randombeans.FieldPopulatorTest$JaxbElementFieldBean");
+    }
+
+    public class JaxbElementFieldBean {
+      JAXBElement<String> jaxbElementField;
     }
 }

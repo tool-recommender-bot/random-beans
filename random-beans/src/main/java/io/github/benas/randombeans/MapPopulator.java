@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -51,7 +51,7 @@ class MapPopulator {
     }
 
     @SuppressWarnings("unchecked")
-    Map<?, ?> getRandomMap(final Field field, final PopulatorContext context) {
+    Map<?, ?> getRandomMap(final Field field, final RandomizationContext context) {
         int randomSize = enhancedRandom.getRandomCollectionSize();
         Class<?> fieldType = field.getType();
         Type fieldGenericType = field.getGenericType();

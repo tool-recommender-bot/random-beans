@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.function.Supplier;
 
@@ -129,35 +129,17 @@ public class EnhancedRandomBuilderTest {
     }
 
     @Test(expected=IllegalArgumentException.class)
-    public void shouldNotAllowNegativeMinCollectionSize() {
+    public void shouldNotAllowNegativeMinStringLength() {
         enhancedRandomBuilder = aNewEnhancedRandomBuilder();
 
-        enhancedRandomBuilder.minCollectionSize(-1).build();
+        enhancedRandomBuilder.stringLengthRange(-1, 10).build();
     }
 
     @Test(expected=IllegalArgumentException.class)
-    public void shouldNotAllowMinCollectionSizeGreaterThanMaxCollectionSize() {
+    public void shouldNotAllowMinStringLengthGreaterThanMaxStringLength() {
         enhancedRandomBuilder = aNewEnhancedRandomBuilder();
 
-        enhancedRandomBuilder.minCollectionSize(2).maxCollectionSize(1).build();
-    }
-
-    @Test
-    public void shouldConfigureCollectionSizeFromBuilder() {
-        enhancedRandomBuilder = aNewEnhancedRandomBuilder();
-
-        EnhancedRandom enhancedRandom = enhancedRandomBuilder.minCollectionSize(41).maxCollectionSize(42).build();
-
-        assertThat(((EnhancedRandomImpl)enhancedRandom).getRandomCollectionSize()).isBetween(41, 42);
-    }
-
-    @Test // https://github.com/benas/random-beans/issues/191
-    public void maxCollectionSizeShouldWorkForArrays() {
-        EnhancedRandom enhancedRandom = aNewEnhancedRandomBuilder().maxCollectionSize(1).build();
-
-        String[] strArr = enhancedRandom.nextObject(String[].class);
-
-        assertThat(strArr.length).isLessThanOrEqualTo(1);
+        enhancedRandomBuilder.stringLengthRange(2, 1).build();
     }
 
     @Test

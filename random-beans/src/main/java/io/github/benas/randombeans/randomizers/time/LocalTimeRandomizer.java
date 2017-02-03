@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,6 @@
 package io.github.benas.randombeans.randomizers.time;
 
 import io.github.benas.randombeans.api.Randomizer;
-import io.github.benas.randombeans.randomizers.time.internal.HourRandomizer;
-import io.github.benas.randombeans.randomizers.time.internal.MinuteRandomizer;
 
 import java.time.LocalTime;
 

@@ -2,7 +2,7 @@
 <!--
   ~ The MIT License
   ~
-  ~   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+  ~   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
   ~
   ~   Permission is hereby granted, free of charge, to any person obtaining a copy
   ~   of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@
     <parent>
         <artifactId>random-beans-parent</artifactId>
         <groupId>io.github.benas</groupId>
-        <version>3.4.1-SNAPSHOT</version>
+        <version>3.5.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

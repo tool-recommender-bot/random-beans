@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -60,11 +60,11 @@ public class CollectionRandomizersTest {
 
     @Test
     @UseDataProvider("generateCollectionRandomizers")
-    public <T> void generatedCollectionSizeShouldNotBeEmpty(Randomizer<Collection<T>> collectionRandomizer) {
+    public <T> void generatedCollectionShouldNotBeNull(Randomizer<Collection<T>> collectionRandomizer) {
         // when
         Collection<T> randomCollection = collectionRandomizer.getRandomValue();
 
-        then(randomCollection).isNotEmpty();
+        then(randomCollection).isNotNull();
     }
 
     @DataProvider

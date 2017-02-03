@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,8 @@ package io.github.benas.randombeans;
 
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
+
+import io.github.benas.randombeans.api.ObjectGenerationException;
 
 import java.util.Collection;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -57,7 +59,11 @@ class ObjectFactory {
                 return (T) createNewInstance(randomConcreteSubType);
             }
         } else {
-            return createNewInstance(type);
+            try {
+                return createNewInstance(type);
+            } catch (Error e) {
+                throw new ObjectGenerationException("Unable to create an instance of type: " + type, e);
+            }
         }
     }
 

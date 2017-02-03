@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -66,25 +66,31 @@ class FieldPopulator {
         this.mapPopulator = mapPopulator;
     }
 
-    void populateField(final Object target, final Field field, final PopulatorContext context) throws IllegalAccessException {
+    void populateField(final Object target, final Field field, final RandomizationContext context) throws IllegalAccessException {
         Randomizer<?> randomizer = randomizerProvider.getRandomizerByField(field);
         if (randomizer instanceof SkipRandomizer) {
             return;
         }
-        context.pushStackItem(new PopulatorContextStackItem(target, field));
-        if(!context.isExceedRandomizationDepth()) {
+        context.pushStackItem(new RandomizationContextStackItem(target, field));
+        if(!context.hasExceededRandomizationDepth()) {
             Object value;
             if (randomizer != null) {
                 value = randomizer.getRandomValue();
             } else {
-                value = generateRandomValue(field, context);
+                try {
+                    value = generateRandomValue(field, context);
+                } catch (ObjectGenerationException e) {
+                    String exceptionMessage = String.format("Unable to create type: %s for field: %s of class: %s",
+                          field.getType().getName(), field.getName(), target.getClass().getName());
+                    throw new ObjectGenerationException(exceptionMessage, e);
+                }
             }
             setProperty(target, field, value);
         }
         context.popStackItem();
     }
 
-    private Object generateRandomValue(final Field field, final PopulatorContext context) {
+    private Object generateRandomValue(final Field field, final RandomizationContext context) {
         Class<?> fieldType = field.getType();
         Type fieldGenericType = field.getGenericType();
 

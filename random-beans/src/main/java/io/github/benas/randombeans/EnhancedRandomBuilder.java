@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,8 @@ import io.github.benas.randombeans.api.Randomizer;
 import io.github.benas.randombeans.api.RandomizerRegistry;
 import io.github.benas.randombeans.randomizers.registry.CustomRandomizerRegistry;
 import io.github.benas.randombeans.randomizers.registry.ExclusionRandomizerRegistry;
+import io.github.benas.randombeans.util.Constants;
+import io.github.benas.randombeans.util.Range;
 
 import java.nio.charset.Charset;
 import java.time.LocalDate;
@@ -38,6 +40,8 @@ import java.util.function.Supplier;
 
 import static io.github.benas.randombeans.FieldDefinitionBuilder.field;
 import static io.github.benas.randombeans.RandomizerProxy.asRandomizer;
+import static io.github.benas.randombeans.util.Constants.DEFAULT_COLLECTION_SIZE_RANGE;
+import static io.github.benas.randombeans.util.Constants.DEFAULT_STRING_LENGTH_RANGE;
 import static java.lang.String.format;
 
 /**
@@ -187,47 +191,93 @@ public class EnhancedRandomBuilder {
     /**
      * Set the minimum collection size.
      *
+     * @deprecated use {@link EnhancedRandomBuilder#collectionSizeRange(int, int)} instead
      * @param minCollectionSize the minimum collection size
      * @return a pre configured {@link EnhancedRandomBuilder} instance
      */
+    @Deprecated
     public EnhancedRandomBuilder minCollectionSize(final int minCollectionSize) {
         if (minCollectionSize < 0) {
             throw new IllegalArgumentException("minCollectionSize must be >= 0");
         }
-        parameters.setMinCollectionSize(minCollectionSize);
+        parameters.setCollectionSizeRange(new Range<>(minCollectionSize, Constants.DEFAULT_COLLECTION_SIZE_RANGE.getMax()));
         return this;
     }
 
     /**
      * Set the maximum collection size.
      *
+     * @deprecated use {@link EnhancedRandomBuilder#collectionSizeRange(int, int)} instead
      * @param maxCollectionSize the maximum collection size
      * @return a pre configured {@link EnhancedRandomBuilder} instance
      */
+    @Deprecated
     public EnhancedRandomBuilder maxCollectionSize(final int maxCollectionSize) {
-        parameters.setMaxCollectionSize(maxCollectionSize);
+        parameters.setCollectionSizeRange(new Range<>(DEFAULT_COLLECTION_SIZE_RANGE.getMin(), maxCollectionSize));
+        return this;
+    }
+
+    /**
+     * Set the collection size range.
+     *
+     * @param minCollectionSize the minimum collection size
+     * @param maxCollectionSize the maximum collection size
+     * @return a pre configured {@link EnhancedRandomBuilder} instance
+     */
+    public EnhancedRandomBuilder collectionSizeRange(final int minCollectionSize, final int maxCollectionSize) {
+        if (minCollectionSize < 0) {
+            throw new IllegalArgumentException("minCollectionSize must be >= 0");
+        }
+        if (minCollectionSize > maxCollectionSize) {
+            throw new IllegalArgumentException(format("minCollectionSize (%s) must be <= than maxCollectionSize (%s)",
+                    minCollectionSize, maxCollectionSize));
+        }
+        parameters.setCollectionSizeRange(new Range<>(minCollectionSize, maxCollectionSize));
+        return this;
+    }
+
+    /**
+     * Set the string length range.
+     *
+     * @param minStringLength the minimum string length
+     * @param maxStringLength the maximum string length
+     * @return a pre configured {@link EnhancedRandomBuilder} instance
+     */
+    public EnhancedRandomBuilder stringLengthRange(final int minStringLength, final int maxStringLength) {
+        if (minStringLength < 0) {
+            throw new IllegalArgumentException("minStringLength must be >= 0");
+        }
+        if (minStringLength > maxStringLength) {
+            throw new IllegalArgumentException(format("minStringLength (%s) must be <= than maxStringLength (%s)",
+                    minStringLength, maxStringLength));
+        }
+        parameters.setStringLengthRange(new Range<>(minStringLength, maxStringLength));
         return this;
     }
 
     /**
      * Set the maximum string length.
      *
+     * @deprecated use {@link EnhancedRandomBuilder#stringLengthRange(int, int)} instead
      * @param maxStringLength the maximum string length
      * @return a pre configured {@link EnhancedRandomBuilder} instance
      */
+    @Deprecated
     public EnhancedRandomBuilder maxStringLength(final int maxStringLength) {
-        parameters.setMaxStringLength(maxStringLength);
+        parameters.setStringLengthRange(new Range<>(DEFAULT_STRING_LENGTH_RANGE.getMin(), maxStringLength));
         return this;
     }
 
     /**
      * Set the minimum string length.
      *
+     * @deprecated use {@link EnhancedRandomBuilder#stringLengthRange(int, int)} instead
      * @param minStringLength the minimum string length
      * @return a pre configured {@link EnhancedRandomBuilder} instance
      */
+    @Deprecated
     public EnhancedRandomBuilder minStringLength(final int minStringLength) {
-        parameters.setMinStringLength(minStringLength);
+        parameters.setStringLengthRange(new Range<>(minStringLength, DEFAULT_STRING_LENGTH_RANGE.getMax()));
         return this;
     }
 
@@ -236,20 +286,46 @@ public class EnhancedRandomBuilder {
      *
      * @param maxObjectPoolSize the maximum number of objects
      * @return a pre configured {@link EnhancedRandomBuilder} instance
+     * @deprecated use {@link io.github.benas.randombeans.EnhancedRandomBuilder#objectPoolSize(int)} instead
      */
+    @Deprecated
     public EnhancedRandomBuilder maxObjectPoolSize(final int maxObjectPoolSize) {
-        parameters.setMaxObjectPoolSize(maxObjectPoolSize);
+        parameters.setObjectPoolSize(maxObjectPoolSize);
+        return this;
+    }
+
+    /**
+     * Set the number of different objects to generate for a type.
+     *
+     * @param objectPoolSize the number of objects to generate in the pool
+     * @return a pre configured {@link EnhancedRandomBuilder} instance
+     */
+    public EnhancedRandomBuilder objectPoolSize(final int objectPoolSize) {
+        parameters.setObjectPoolSize(objectPoolSize);
         return this;
     }
 
     /**
      * Set the maximum randomization depth for objects tree.
      *
+     * @deprecated use {@link EnhancedRandomBuilder#randomizationDepth(int)} instead
      * @param maxRandomizationDepth the maximum randomization depth
      * @return a pre configured {@link EnhancedRandomBuilder} instance
      */
+    @Deprecated
     public EnhancedRandomBuilder maxRandomizationDepth(final int maxRandomizationDepth) {
-        parameters.setMaxRandomizationDepth(maxRandomizationDepth);
+        parameters.setRandomizationDepth(maxRandomizationDepth);
+        return this;
+    }
+
+    /**
+     * Set the randomization depth for objects tree.
+     *
+     * @param randomizationDepth the maximum randomization depth
+     * @return a pre configured {@link EnhancedRandomBuilder} instance
+     */
+    public EnhancedRandomBuilder randomizationDepth(final int randomizationDepth) {
+        parameters.setRandomizationDepth(randomizationDepth);
         return this;
     }
 
@@ -272,7 +348,7 @@ public class EnhancedRandomBuilder {
      * @return a pre configured {@link EnhancedRandomBuilder} instance
      */
     public EnhancedRandomBuilder dateRange(final LocalDate min, final LocalDate max) {
-        parameters.setDateRange(min, max);
+        parameters.setDateRange(new Range<>(min, max));
         return this;
     }
 
@@ -284,7 +360,7 @@ public class EnhancedRandomBuilder {
      * @return a pre configured {@link EnhancedRandomBuilder} instance
      */
     public EnhancedRandomBuilder timeRange(final LocalTime min, final LocalTime max) {
-        parameters.setTimeRange(min, max);
+        parameters.setTimeRange(new Range<>(min, max));
         return this;
     }
 
@@ -346,8 +422,9 @@ public class EnhancedRandomBuilder {
      * @return a configured {@link EnhancedRandom} instance
      */
     public EnhancedRandom build() {
-        int minCollectionSize = parameters.getMinCollectionSize();
-        int maxCollectionSize = parameters.getMaxCollectionSize();
+        int minCollectionSize = parameters.getCollectionSizeRange().getMin();
+        int maxCollectionSize = parameters.getCollectionSizeRange().getMax();
+        // // TODO can be removed when deprecated methods (minCollectionSize/maxCollectionSize) are removed
         if (minCollectionSize > maxCollectionSize) {
             throw new IllegalArgumentException(format("minCollectionSize (%s) must be <= than maxCollectionSize (%s)",
                     minCollectionSize, maxCollectionSize));

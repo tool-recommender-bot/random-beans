@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -21,33 +21,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.benas.randombeans.randomizers.time.internal;
+package io.github.benas.randombeans.util;
 
-import io.github.benas.randombeans.api.Randomizer;
-import io.github.benas.randombeans.randomizers.range.IntegerRangeRandomizer;
+import lombok.Data;
 
 /**
- * A {@link Randomizer} that generates a random day value between {@link DayRandomizer#MIN_DAY} and {@link DayRandomizer#MAX_DAY}.
- * 
+ * Utility class to hold a range of values.
+ *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ * @param <T> type of values
  */
-public class DayRandomizer implements Randomizer<Integer> {
-    
-    public static final int MIN_DAY = 1;
-    public static final int MAX_DAY = 28; // 31 may break some LocalDateTime instances when the dayOfMonth is invalid
+@Data
+public class Range<T> {
 
-    private final IntegerRangeRandomizer dayRandomizer;
+    private T min;
+    private T max;
 
-    public DayRandomizer() {
-        dayRandomizer = new IntegerRangeRandomizer(MIN_DAY, MAX_DAY);
-    }
-
-    public DayRandomizer(final long seed) {
-        dayRandomizer = new IntegerRangeRandomizer(MIN_DAY, MAX_DAY, seed);
-    }
-
-    @Override
-    public Integer getRandomValue() {
-        return dayRandomizer.getRandomValue();
+    public Range(T min, T max) {
+        this.min = min;
+        this.max = max;
     }
 }

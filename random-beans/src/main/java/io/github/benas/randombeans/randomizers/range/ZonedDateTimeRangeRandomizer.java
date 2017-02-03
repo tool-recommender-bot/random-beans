@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -86,12 +86,12 @@ public class ZonedDateTimeRangeRandomizer extends AbstractRangeRandomizer<ZonedD
 
     @Override
     protected ZonedDateTime getDefaultMinValue() {
-        return Constants.TEN_YEARS_AGO;
+        return Constants.DEFAULT_DATES_RANGE.getMin();
     }
 
     @Override
     protected ZonedDateTime getDefaultMaxValue() {
-        return Constants.IN_TEN_YEARS;
+        return Constants.DEFAULT_DATES_RANGE.getMax();
     }
 
     @Override

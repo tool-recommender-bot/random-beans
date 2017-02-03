@@ -1,7 +1,7 @@
 <!--
   ~ The MIT License
   ~
-  ~   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+  ~   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
   ~
   ~   Permission is hereby granted, free of charge, to any person obtaining a copy
   ~   of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@
 
     <groupId>io.github.benas</groupId>
     <artifactId>random-beans-parent</artifactId>
-    <version>3.4.1-SNAPSHOT</version>
+    <version>3.5.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Random Beans</name>
@@ -43,22 +43,22 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <lombok.version>1.16.10</lombok.version>
+        <lombok.version>1.16.12</lombok.version>
         <junit.version>4.12</junit.version>
-        <faker.version>0.11</faker.version>
-        <assertj.version>3.5.2</assertj.version>
+        <faker.version>0.12</faker.version>
+        <assertj.version>3.6.2</assertj.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
-        <joda-time.version>2.9.4</joda-time.version>
-        <spring-context.version>4.3.3.RELEASE</spring-context.version>
-        <objenesis.version>2.4</objenesis.version>
-        <fast-classpath-scanner.version>2.0.5</fast-classpath-scanner.version>
-        <hibernate-validator.version>5.3.1.Final</hibernate-validator.version>
+        <joda-time.version>2.9.7</joda-time.version>
+        <spring-context.version>4.3.6.RELEASE</spring-context.version>
+        <objenesis.version>2.5.1</objenesis.version>
+        <fast-classpath-scanner.version>2.0.13</fast-classpath-scanner.version>
+        <hibernate-validator.version>5.3.3.Final</hibernate-validator.version>
         <javax.el.version>2.2.6</javax.el.version>
-        <jackson.version>2.8.4</jackson.version>
-        <mockito-core.version>2.2.9</mockito-core.version>
+        <jackson.version>2.8.6</jackson.version>
+        <mockito-core.version>2.6.8</mockito-core.version>
         <junit-dataprovider.version>1.12.0</junit-dataprovider.version>
         <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
-        <maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
         <maven-cobertura-plugin.version>2.7</maven-cobertura-plugin.version>
         <maven-coveralls-plugin.version>4.3.0</maven-coveralls-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
@@ -231,9 +231,6 @@
                 <groupId>com.github.javafaker</groupId>
                 <artifactId>javafaker</artifactId>
                 <version>${faker.version}</version>
-                <!-- The "plain" version of javafaker has a dependency that is not in maven central and therefore
-                     not available for user with restrictive policies concerning allowed maven repos. -->
-                <classifier>deps</classifier>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
@@ -317,7 +314,7 @@
                 <configuration>
                     <header>licence-header-template.txt</header>
                     <properties>
-                        <currentYear>2016</currentYear>
+                        <currentYear>2017</currentYear>
                     </properties>
                     <strictCheck>true</strictCheck>
                     <includes>

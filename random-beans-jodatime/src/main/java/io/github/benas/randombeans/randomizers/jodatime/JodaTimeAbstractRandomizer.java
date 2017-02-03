@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,7 @@ import io.github.benas.randombeans.randomizers.range.DateRangeRandomizer;
 
 import java.util.Date;
 
-import static io.github.benas.randombeans.util.Constants.IN_TEN_YEARS;
-import static io.github.benas.randombeans.util.Constants.TEN_YEARS_AGO;
+import static io.github.benas.randombeans.util.Constants.DEFAULT_DATES_RANGE;
 import static io.github.benas.randombeans.util.DateUtils.toDate;
 
 /**
@@ -42,11 +41,11 @@ public abstract class JodaTimeAbstractRandomizer<T> implements Randomizer<T> {
     private final DateRangeRandomizer delegate;
 
     protected JodaTimeAbstractRandomizer() {
-        delegate = new DateRangeRandomizer(toDate(TEN_YEARS_AGO), toDate(IN_TEN_YEARS));
+        delegate = new DateRangeRandomizer(toDate(DEFAULT_DATES_RANGE.getMin()), toDate(DEFAULT_DATES_RANGE.getMax()));
     }
 
     protected JodaTimeAbstractRandomizer(final long seed) {
-        delegate = new DateRangeRandomizer(toDate(TEN_YEARS_AGO), toDate(IN_TEN_YEARS), seed);
+        delegate = new DateRangeRandomizer(toDate(DEFAULT_DATES_RANGE.getMin()), toDate(DEFAULT_DATES_RANGE.getMax()), seed);
     }
 
     protected JodaTimeAbstractRandomizer(final Date min, final Date max, final long seed) {

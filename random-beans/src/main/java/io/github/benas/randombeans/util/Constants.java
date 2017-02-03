@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -36,53 +36,80 @@ import static java.time.ZonedDateTime.of;
 public abstract class Constants {
 
     /**
-     * Reference date around which random dates will be generated.
-     */
-    private static final ZonedDateTime REFERENCE_DATE = of(2020, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC+1"));
-
-    /**
      * Minimum collection size.
+     * @deprecated use {@link Constants#DEFAULT_COLLECTION_SIZE_RANGE} instead
      */
+    @Deprecated
     public static final int MIN_COLLECTION_SIZE = 1;
 
     /**
      * Maximum collection size.
+     * @deprecated use {@link Constants#DEFAULT_COLLECTION_SIZE_RANGE} instead
      */
+    @Deprecated
     public static final int MAX_COLLECTION_SIZE = Byte.MAX_VALUE;
 
     /**
-     * Maximum number of different objects to generate for a type.
+     * Default collection size range.
      */
-    public static final int MAX_OBJECT_POOL_SIZE = 10;
+    public static final Range<Integer> DEFAULT_COLLECTION_SIZE_RANGE = new Range<>(1, 100);
 
     /**
-     * Value for property maxRandomizationDepth, which mean, that randomization depth is unlimited
+     * Number of different objects to generate for a type.
      */
-    public static final int MAX_RANDOMIZATION_DEPTH = Integer.MAX_VALUE;
+    public static final int DEFAULT_OBJECT_POOL_SIZE = 10;
+
+    /**
+     * Default value for randomization depth, which mean, that randomization depth is unlimited
+     */
+    public static final int DEFAULT_RANDOMIZATION_DEPTH = Integer.MAX_VALUE;
 
     /**
      * Maximum string size.
+     * @deprecated use {@link Constants#DEFAULT_STRING_LENGTH_RANGE} instead
      */
-    public static final byte MAX_STRING_LENGTH = 32;
+    @Deprecated
+    public static final int MAX_STRING_LENGTH = 32;
 
     /**
      * Minimum string size.
+     * @deprecated use {@link Constants#DEFAULT_STRING_LENGTH_RANGE} instead
      */
-    public static final byte MIN_STRING_LENGTH = 1;
+    @Deprecated
+    public static final int MIN_STRING_LENGTH = 1;
+
+    /**
+     * Default string length size.
+     */
+    public static final Range<Integer> DEFAULT_STRING_LENGTH_RANGE = new Range<>(1, 32);
 
     /**
      * Default date range in which dates will be generated: [now - 10 years, now + 10 years].
      */
     public static final int DEFAULT_DATE_RANGE = 10;
+
+    /**
+     * Reference date around which random dates will be generated.
+     */
+    private static final ZonedDateTime REFERENCE_DATE = of(2020, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC+1"));
+
     /**
      * The date of ten years before {@link Constants#REFERENCE_DATE}.
      */
+    @Deprecated
     public static final ZonedDateTime TEN_YEARS_AGO = REFERENCE_DATE.minusYears(DEFAULT_DATE_RANGE);
 
     /**
      * The date of ten years after the {@link Constants#REFERENCE_DATE}.
      */
+    @Deprecated
     public static final ZonedDateTime IN_TEN_YEARS = REFERENCE_DATE.plusYears(DEFAULT_DATE_RANGE);
+
+    /**
+     * Default dates range.
+     */
+    public static final Range<ZonedDateTime> DEFAULT_DATES_RANGE =
+            new Range<>(REFERENCE_DATE.minusYears(DEFAULT_DATE_RANGE), REFERENCE_DATE.plusYears(DEFAULT_DATE_RANGE));
 
     private Constants() { }
 

@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -37,9 +37,9 @@ import java.time.ZoneOffset;
  */
 public class OffsetDateTimeRandomizer implements Randomizer<OffsetDateTime> {
 
-    private final LocalDateRandomizer localDateRandomizer;
-    private final LocalTimeRandomizer localTimeRandomizer;
-    private final ZoneOffsetRandomizer zoneOffsetRandomizer;
+    private LocalDateRandomizer localDateRandomizer;
+    private LocalTimeRandomizer localTimeRandomizer;
+    private ZoneOffsetRandomizer zoneOffsetRandomizer;
 
     /**
      * Create a new {@link OffsetDateTimeRandomizer}.
@@ -86,5 +86,17 @@ public class OffsetDateTimeRandomizer implements Randomizer<OffsetDateTime> {
         LocalTime randomLocalTime = localTimeRandomizer.getRandomValue();
         ZoneOffset randomZoneOffset = zoneOffsetRandomizer.getRandomValue();
         return OffsetDateTime.of(randomLocalDate, randomLocalTime, randomZoneOffset);
+    }
+
+    public void setLocalDateRandomizer(final LocalDateRandomizer localDateRandomizer) {
+        this.localDateRandomizer = localDateRandomizer;
+    }
+
+    public void setLocalTimeRandomizer(final LocalTimeRandomizer localTimeRandomizer) {
+        this.localTimeRandomizer = localTimeRandomizer;
+    }
+
+    public void setZoneOffsetRandomizer(final ZoneOffsetRandomizer zoneOffsetRandomizer) {
+        this.zoneOffsetRandomizer = zoneOffsetRandomizer;
     }
 }

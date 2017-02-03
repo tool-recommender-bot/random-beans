@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -70,7 +70,7 @@ public class InternalRandomizerRegistry implements RandomizerRegistry {
     public void init(EnhancedRandomParameters parameters) {
         long seed = parameters.getSeed();
         Charset charset = parameters.getCharset();
-        randomizers.put(String.class, new StringRandomizer(charset, parameters.getMinStringLength(), parameters.getMaxStringLength(), seed));
+        randomizers.put(String.class, new StringRandomizer(charset, parameters.getStringLengthRange().getMin(), parameters.getStringLengthRange().getMax(), seed));
         CharacterRandomizer characterRandomizer = new CharacterRandomizer(charset, seed);
         randomizers.put(Character.class, characterRandomizer);
         randomizers.put(char.class, characterRandomizer);

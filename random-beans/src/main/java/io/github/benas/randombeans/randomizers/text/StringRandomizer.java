@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -37,8 +37,8 @@ public class StringRandomizer extends AbstractRandomizer<String> {
 
     private final CharacterRandomizer characterRandomizer;
 
-    private int maxLength = Constants.MAX_STRING_LENGTH;
-    private int minLength = Constants.MIN_STRING_LENGTH;
+    private int maxLength = Constants.DEFAULT_STRING_LENGTH_RANGE.getMax();
+    private int minLength = Constants.DEFAULT_STRING_LENGTH_RANGE.getMin();
 
     /**
      * Create a new {@link StringRandomizer}.
@@ -253,7 +253,7 @@ public class StringRandomizer extends AbstractRandomizer<String> {
     @Override
     public String getRandomValue() {
         StringBuilder stringBuilder = new StringBuilder();
-        int length = minLength + random.nextInt(maxLength - minLength);
+        int length = minLength + random.nextInt(maxLength - minLength + 1);
         for (int i = 0; i < length; i++) {
             stringBuilder.append(characterRandomizer.getRandomValue());
         }

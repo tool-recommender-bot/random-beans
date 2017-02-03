@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -21,33 +21,16 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.benas.randombeans.randomizers.time.internal;
+package io.github.benas.randombeans.beans;
 
-import io.github.benas.randombeans.api.Randomizer;
-import io.github.benas.randombeans.randomizers.range.IntegerRangeRandomizer;
+import lombok.Data;
 
-/**
- * A {@link Randomizer} that generates a random hour value between {@link HourRandomizer#MIN_HOUR} and {@link HourRandomizer#MAX_HOUR}.
- * 
- * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
- */
-public class HourRandomizer implements Randomizer<Integer> {
-    
-    public static final int MIN_HOUR = 0;
-    public static final int MAX_HOUR = 23;
+@Data
+public class BeanWithDefaultFieldValues {
+    private String defaultNonNullValue = "default";
+    private String defaultNonNullValueSetByConstructor;
 
-    private final IntegerRangeRandomizer hourRandomizer;
-
-    public HourRandomizer() {
-        hourRandomizer = new IntegerRangeRandomizer(MIN_HOUR, MAX_HOUR);
-    }
-
-    public HourRandomizer(final long seed) {
-        hourRandomizer = new IntegerRangeRandomizer(MIN_HOUR, MAX_HOUR, seed);
-    }
-
-    @Override
-    public Integer getRandomValue() {
-        return hourRandomizer.getRandomValue();
+    public BeanWithDefaultFieldValues() {
+        defaultNonNullValueSetByConstructor = "defaultSetByConstructor";
     }
 }

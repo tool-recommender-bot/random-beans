@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.lang.reflect.Field;
 
@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FieldExclusionCheckerTest {
 
     @Mock
-    private PopulatorContext populatorContext;
+    private RandomizationContext randomizationContext;
 
     private FieldExclusionChecker checker;
 
@@ -53,7 +53,7 @@ public class FieldExclusionCheckerTest {
         Field field = Human.class.getDeclaredField("SERIAL_VERSION_UID");
 
         // When
-        boolean actual = checker.shouldBeExcluded(field, populatorContext);
+        boolean actual = checker.shouldBeExcluded(field, randomizationContext);
 
         // Then
         assertThat(actual).isTrue();

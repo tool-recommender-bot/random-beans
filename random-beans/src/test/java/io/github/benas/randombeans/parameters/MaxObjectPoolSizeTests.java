@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -21,27 +21,29 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.benas.randombeans;
+package io.github.benas.randombeans.parameters;
 
 import io.github.benas.randombeans.api.EnhancedRandom;
-import lombok.Data;
+import io.github.benas.randombeans.beans.PersonTuple;
+import org.junit.Test;
 
-import java.lang.reflect.Field;
+import static io.github.benas.randombeans.EnhancedRandomBuilder.aNewEnhancedRandomBuilder;
+import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Context object holding the data of a recursion step in {@link EnhancedRandom#nextObject(Class, String...)}.
- *
- * @author Rémi Alvergnat (toilal.dev@gmail.com)
- */
-@Data
-class PopulatorContextStackItem {
+public class MaxObjectPoolSizeTests {
 
-    private Object object;
+    @Test
+    public void testMaxObjectPoolSize() {
+        // Given
+        EnhancedRandom enhancedRandom = aNewEnhancedRandomBuilder()
+                .objectPoolSize(1)
+                .build();
 
-    private Field field;
+        // When
+        PersonTuple persons = enhancedRandom.nextObject(PersonTuple.class);
 
-    public PopulatorContextStackItem(final Object object, final Field field) {
-        this.object = object;
-        this.field = field;
+        // Then
+        assertThat(persons.left).isSameAs(persons.right);
     }
+
 }

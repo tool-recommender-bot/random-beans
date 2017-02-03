@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -36,8 +36,8 @@ import java.time.LocalTime;
  */
 public class LocalDateTimeRandomizer implements Randomizer<LocalDateTime> {
 
-    private final LocalDateRandomizer localDateRandomizer;
-    private final LocalTimeRandomizer localTimeRandomizer;
+    private LocalDateRandomizer localDateRandomizer;
+    private LocalTimeRandomizer localTimeRandomizer;
 
     /**
      * Create a new {@link LocalDateTimeRandomizer}.
@@ -81,5 +81,13 @@ public class LocalDateTimeRandomizer implements Randomizer<LocalDateTime> {
         LocalDate localDate = localDateRandomizer.getRandomValue();
         LocalTime localTime = localTimeRandomizer.getRandomValue();
         return LocalDateTime.of(localDate, localTime);
+    }
+
+    public void setLocalDateRandomizer(final LocalDateRandomizer localDateRandomizer) {
+        this.localDateRandomizer = localDateRandomizer;
+    }
+
+    public void setLocalTimeRandomizer(final LocalTimeRandomizer localTimeRandomizer) {
+        this.localTimeRandomizer = localTimeRandomizer;
     }
 }

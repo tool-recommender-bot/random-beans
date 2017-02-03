@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@
 package io.github.benas.randombeans;
 
 import io.github.benas.randombeans.api.EnhancedRandom;
-import io.github.benas.randombeans.util.Constants;
+import io.github.benas.randombeans.api.EnhancedRandomParameters;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -37,32 +37,30 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Rémi Alvergnat (toilal.dev@gmail.com)
  */
-class PopulatorContext {
+class RandomizationContext {
 
-    private final int maxRandomizationDepth;
-
-    private final int maxObjectPoolSize;
+    private final EnhancedRandomParameters parameters;
 
     private final Set<String> excludedFields;
 
     private final Map<Class<?>, List<Object>> populatedBeans;
 
-    private final Stack<PopulatorContextStackItem> stack;
+    private final Stack<RandomizationContextStackItem> stack;
 
-    PopulatorContext(final int maxObjectPoolSize, final int maxRandomizationDepth, final String... excludedFields) {
+    RandomizationContext(final EnhancedRandomParameters parameters, final String... excludedFields) {
         populatedBeans = new IdentityHashMap<>();
         stack = new Stack<>();
-        this.maxObjectPoolSize = maxObjectPoolSize;
-        this.maxRandomizationDepth = maxRandomizationDepth;
+        this.parameters = parameters;
         this.excludedFields = new HashSet<>(toLowerCase(Arrays.asList(excludedFields)));
     }
 
     void addPopulatedBean(final Class<?> type, Object object) {
+        int objectPoolSize = parameters.getObjectPoolSize();
         List<Object> objects = populatedBeans.get(type);
         if (objects == null) {
-            objects = new ArrayList<>(maxObjectPoolSize);
+            objects = new ArrayList<>(objectPoolSize);
         }
-        if (objects.size() < maxObjectPoolSize) {
+        if (objects.size() < objectPoolSize) {
             objects.add(object);
         }
         populatedBeans.put(type, objects);
@@ -74,15 +72,15 @@ class PopulatorContext {
         return populatedBeans.get(type).get(randomIndex);
     }
 
-    boolean hasRandomizedType(final Class<?> type) {
-        return populatedBeans.containsKey(type) && populatedBeans.get(type).size() == maxObjectPoolSize;
+    boolean hasAlreadyRandomizedType(final Class<?> type) {
+        return populatedBeans.containsKey(type) && populatedBeans.get(type).size() == parameters.getObjectPoolSize();
     }
 
     Set<String> getExcludedFields() {
         return excludedFields;
     }
 
-    void pushStackItem(final PopulatorContextStackItem field) {
+    void pushStackItem(final RandomizationContextStackItem field) {
         stack.push(field);
     }
 
@@ -96,9 +94,9 @@ class PopulatorContext {
         return String.join(".", toLowerCase(pathToField));
     }
 
-    boolean isExceedRandomizationDepth(){
+    boolean hasExceededRandomizationDepth() {
         int currentRandomizationDepth = stack.size();
-        return currentRandomizationDepth>maxRandomizationDepth;
+        return currentRandomizationDepth > parameters.getRandomizationDepth();
     }
 
     private List<String> getStackedFieldNames() {
@@ -106,10 +104,10 @@ class PopulatorContext {
     }
 
     private List<String> toLowerCase(final List<String> strings) {
-      return strings.stream().map(String::toLowerCase).collect(toList());
+        return strings.stream().map(String::toLowerCase).collect(toList());
     }
 
     private int nextInt(int startInclusive, int endExclusive) {
-      return startInclusive + new Random().nextInt(endExclusive - startInclusive);
+        return startInclusive + new Random().nextInt(endExclusive - startInclusive);
     }
 }

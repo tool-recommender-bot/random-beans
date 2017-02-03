@@ -1,7 +1,7 @@
 /**
  * The MIT License
  *
- *   Copyright (c) 2016, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *   Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 package io.github.benas.randombeans.api;
 
 import io.github.benas.randombeans.util.Constants;
+import io.github.benas.randombeans.util.Range;
 import lombok.Data;
 
 import java.nio.charset.Charset;
@@ -32,8 +33,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Random;
 
-import static io.github.benas.randombeans.util.Constants.IN_TEN_YEARS;
-import static io.github.benas.randombeans.util.Constants.TEN_YEARS_AGO;
+import static io.github.benas.randombeans.util.Constants.*;
 
 /**
  * Parameters of an {@link EnhancedRandom} instance.
@@ -44,60 +44,43 @@ import static io.github.benas.randombeans.util.Constants.TEN_YEARS_AGO;
 public class EnhancedRandomParameters {
 
     private long seed;
-
-    private int minCollectionSize;
-
-    private int maxCollectionSize;
-
-    private int maxStringLength;
-
-    private int minStringLength;
-
-    private int maxObjectPoolSize;
-
-    private int maxRandomizationDepth;
-
+    private int objectPoolSize;
+    private int randomizationDepth;
     private Charset charset;
-
     private boolean scanClasspathForConcreteTypes;
-
     private boolean overrideDefaultInitialization;
-
+    private Range<Integer> collectionSizeRange;
+    private Range<Integer> stringLengthRange;
     private Range<LocalDate> dateRange;
-
     private Range<LocalTime> timeRange;
 
     public EnhancedRandomParameters() {
-        scanClasspathForConcreteTypes = false;
         seed = new Random().nextLong();
-        minCollectionSize = Constants.MIN_COLLECTION_SIZE;
-        maxCollectionSize = Constants.MAX_COLLECTION_SIZE;
-        maxStringLength = Constants.MAX_STRING_LENGTH;
-        minStringLength = Constants.MIN_STRING_LENGTH;
-        maxObjectPoolSize = Constants.MAX_OBJECT_POOL_SIZE;
-        maxRandomizationDepth = Constants.MAX_RANDOMIZATION_DEPTH;
         charset = StandardCharsets.US_ASCII;
+        scanClasspathForConcreteTypes = false;
         overrideDefaultInitialization = false;
-        dateRange = new Range<>(TEN_YEARS_AGO.toLocalDate(), IN_TEN_YEARS.toLocalDate());
+        objectPoolSize = Constants.DEFAULT_OBJECT_POOL_SIZE;
+        randomizationDepth = Constants.DEFAULT_RANDOMIZATION_DEPTH;
+        dateRange = new Range<>(DEFAULT_DATES_RANGE.getMin().toLocalDate(), DEFAULT_DATES_RANGE.getMax().toLocalDate());
         timeRange = new Range<>(LocalTime.MIN, LocalTime.MAX);
+        collectionSizeRange = DEFAULT_COLLECTION_SIZE_RANGE;
+        stringLengthRange = DEFAULT_STRING_LENGTH_RANGE;
     }
 
-    public void setDateRange(final LocalDate min, final LocalDate max) {
-        this.dateRange = new Range<>(min, max);
+    public void setCollectionSizeRange(final Range<Integer> collectionSizeRange) {
+        this.collectionSizeRange = collectionSizeRange;
     }
 
-    public void setTimeRange(final LocalTime min, final LocalTime max) {
-        this.timeRange = new Range<>(min, max);
+    public void setDateRange(final Range<LocalDate> dateRange) {
+        this.dateRange = dateRange;
     }
 
-    @Data
-    public static class Range<T> {
-        private T min;
-        private T max;
-
-        public Range(T min, T max) {
-            this.min = min;
-            this.max = max;
-        }
+    public void setTimeRange(final Range<LocalTime> timeRange) {
+        this.timeRange = timeRange;
     }
+
+    public void setStringLengthRange(final Range<Integer> stringLengthRange) {
+        this.stringLengthRange = stringLengthRange;
+    }
+
 }
