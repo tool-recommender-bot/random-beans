@@ -21,36 +21,25 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.benas.randombeans.validation;
+package io.github.benas.randombeans.visibility;
 
-import io.github.benas.randombeans.api.Randomizer;
-import io.github.benas.randombeans.randomizers.text.StringRandomizer;
+import static io.github.benas.randombeans.EnhancedRandomBuilder.aNewEnhancedRandomBuilder;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.validation.constraints.Size;
-import java.lang.reflect.Field;
-import java.nio.charset.Charset;
-import java.util.Random;
+import java.util.function.Supplier;
 
-class SizeAnnotationHandler implements BeanValidationAnnotationHandler {
+import org.junit.Test;
 
-    private final Random random;
+import io.github.benas.randombeans.api.EnhancedRandom;
 
-    private Charset charset;
+public class VisibilityTest {
 
-    public SizeAnnotationHandler(long seed, Charset charset) {
-        random = new Random(seed);
-        this.charset = charset;
-    }
+    @Test
+    public void canPassSupplierLambdaFromOtherPackage() {
+        EnhancedRandom random = aNewEnhancedRandomBuilder().randomize(String.class, (Supplier<String>) () -> "test").build();
 
-    public Randomizer<?> getRandomizer(Field field) {
-        Class<?> fieldType = field.getType();
-        Size sizeAnnotation = field.getAnnotation(Size.class);
+        String value = random.nextObject(String.class);
 
-        final int min = sizeAnnotation.min();
-        final int max = sizeAnnotation.max();
-        if (fieldType.equals(String.class)) {
-            return new StringRandomizer(charset, min, max, random.nextLong());
-        }
-        return null;
+        assertThat(value).isEqualTo("test");
     }
 }

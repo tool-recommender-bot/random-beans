@@ -21,36 +21,39 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.benas.randombeans.validation;
+package io.github.benas.randombeans.randomizers.number;
 
-import io.github.benas.randombeans.api.Randomizer;
-import io.github.benas.randombeans.randomizers.text.StringRandomizer;
+import io.github.benas.randombeans.randomizers.AbstractRandomizerTest;
+import org.junit.Test;
 
-import javax.validation.constraints.Size;
-import java.lang.reflect.Field;
-import java.nio.charset.Charset;
-import java.util.Random;
+import java.math.BigDecimal;
 
-class SizeAnnotationHandler implements BeanValidationAnnotationHandler {
+import static io.github.benas.randombeans.randomizers.number.BigDecimalRandomizer.aNewBigDecimalRandomizer;
+import static org.assertj.core.api.BDDAssertions.then;
 
-    private final Random random;
+public class BigDecimalRandomizerTest extends AbstractRandomizerTest<BigDecimal> {
 
-    private Charset charset;
+    @Test
+    public void generatedValueShouldHaveProvidedPositiveScale() {
+        // given
+        Integer scale = 1;
+        BigDecimalRandomizer bigDecimalRandomizer = aNewBigDecimalRandomizer(scale);
 
-    public SizeAnnotationHandler(long seed, Charset charset) {
-        random = new Random(seed);
-        this.charset = charset;
+        // when
+        BigDecimal bigDecimal = bigDecimalRandomizer.getRandomValue();
+
+        then(bigDecimal.scale()).isEqualTo(scale);
     }
 
-    public Randomizer<?> getRandomizer(Field field) {
-        Class<?> fieldType = field.getType();
-        Size sizeAnnotation = field.getAnnotation(Size.class);
+    @Test
+    public void generatedValueShouldHaveProvidedNegativeScale() {
+        // given
+        Integer scale = -1;
+        BigDecimalRandomizer bigDecimalRangeRandomizer = aNewBigDecimalRandomizer(scale);
 
-        final int min = sizeAnnotation.min();
-        final int max = sizeAnnotation.max();
-        if (fieldType.equals(String.class)) {
-            return new StringRandomizer(charset, min, max, random.nextLong());
-        }
-        return null;
+        // when
+        BigDecimal bigDecimal = bigDecimalRangeRandomizer.getRandomValue();
+
+        then(bigDecimal.scale()).isEqualTo(scale);
     }
 }
