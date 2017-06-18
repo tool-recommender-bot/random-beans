@@ -21,49 +21,16 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  */
-package io.github.benas.randombeans;
+package io.github.benas.randombeans.validation;
 
-import io.github.benas.randombeans.annotation.Priority;
-import org.junit.Before;
-import org.junit.Test;
+import javax.validation.constraints.NotNull;
 
-import java.util.Arrays;
-import java.util.List;
+public class BeanValidationWithoutReadMethodBean {
 
-import static org.assertj.core.api.Assertions.assertThat;
+    @NotNull
+    private String fieldWithoutReadMethod;
 
-public class PriorityComparatorTest {
-
-    private PriorityComparator priorityComparator;
-
-    private Foo foo;
-
-    private Bar bar;
-
-    @Before
-    public void setUp() {
-        priorityComparator = new PriorityComparator();
-        foo = new Foo();
-        bar = new Bar();
-    }
-
-    @Test
-    public void testCompare() {
-        assertThat(priorityComparator.compare(foo, bar)).isGreaterThan(0);
-
-        List<Object> objects = Arrays.asList(foo,bar);
-        objects.sort(priorityComparator);
-        // objects must be sorted in decreasing priority order: 2 > 1
-        assertThat(objects).containsExactly(bar, foo);
-    }
-
-    @Priority(1)
-    private class Foo {
-
-    }
-
-    @Priority(2)
-    private class Bar {
-
+    public void setFieldWithoutReadMethod(String fieldWithoutReadMethod) {
+        this.fieldWithoutReadMethod = fieldWithoutReadMethod;
     }
 }

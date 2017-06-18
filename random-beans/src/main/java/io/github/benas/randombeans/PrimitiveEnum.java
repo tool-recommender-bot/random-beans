@@ -23,47 +23,35 @@
  */
 package io.github.benas.randombeans;
 
-import io.github.benas.randombeans.annotation.Priority;
-import org.junit.Before;
-import org.junit.Test;
+/**
+ * Wrapper for primitive TYPE values and their classes.
+ *
+ * @author Sam Van Overmeire
+ */
+public enum PrimitiveEnum {
 
-import java.util.Arrays;
-import java.util.List;
+    BYTE(Byte.TYPE, Byte.class),
+    SHORT(Short.TYPE, Short.class),
+    INTEGER(Integer.TYPE, Integer.class),
+    LONG(Long.TYPE, Long.class),
+    FLOAT(Float.TYPE, Float.class),
+    DOUBLE(Double.TYPE, Double.class),
+    BOOLEAN(Boolean.TYPE, Boolean.class),
+    CHARACTER(Character.TYPE, Character.class);
 
-import static org.assertj.core.api.Assertions.assertThat;
+    private Class<?> type;
+    private Class<?> clazz;
 
-public class PriorityComparatorTest {
-
-    private PriorityComparator priorityComparator;
-
-    private Foo foo;
-
-    private Bar bar;
-
-    @Before
-    public void setUp() {
-        priorityComparator = new PriorityComparator();
-        foo = new Foo();
-        bar = new Bar();
+    PrimitiveEnum(Class<?> type, Class<?> clazz) {
+        this.type = type;
+        this.clazz = clazz;
     }
 
-    @Test
-    public void testCompare() {
-        assertThat(priorityComparator.compare(foo, bar)).isGreaterThan(0);
-
-        List<Object> objects = Arrays.asList(foo,bar);
-        objects.sort(priorityComparator);
-        // objects must be sorted in decreasing priority order: 2 > 1
-        assertThat(objects).containsExactly(bar, foo);
+    public Class<?> getType() {
+        return type;
     }
 
-    @Priority(1)
-    private class Foo {
-
-    }
-
-    @Priority(2)
-    private class Bar {
-
+    public Class<?> getClazz() {
+        return clazz;
     }
 }

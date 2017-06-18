@@ -24,11 +24,13 @@
 package io.github.benas.randombeans.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.benas.randombeans.PrimitiveEnum;
 import io.github.benas.randombeans.annotation.RandomizerArgument;
 import io.github.benas.randombeans.api.ObjectGenerationException;
 import io.github.benas.randombeans.api.Randomizer;
 import lombok.experimental.UtilityClass;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -36,6 +38,7 @@ import java.util.*;
 import static io.github.benas.randombeans.util.DateUtils.DATE_FORMAT;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.Locale.ENGLISH;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -117,31 +120,12 @@ public class ReflectionUtils {
      * @return the wrapper type of the given primitive type
      */
     public Class<?> getWrapperType(Class<?> primitiveType) {
-        // FIXME is there a better way to do this?
-        if (Byte.TYPE.equals(primitiveType)) {
-            return Byte.class;
+        for(PrimitiveEnum p : PrimitiveEnum.values()) {
+            if(p.getType().equals(primitiveType)) {
+                return p.getClazz();
+            }
         }
-        if (Short.TYPE.equals(primitiveType)) {
-            return Short.class;
-        }
-        if (Integer.TYPE.equals(primitiveType)) {
-            return Integer.class;
-        }
-        if (Long.TYPE.equals(primitiveType)) {
-            return Long.class;
-        }
-        if (Double.TYPE.equals(primitiveType)) {
-            return Double.class;
-        }
-        if (Float.TYPE.equals(primitiveType)) {
-            return Float.class;
-        }
-        if (Boolean.TYPE.equals(primitiveType)) {
-            return Boolean.class;
-        }
-        if (Character.TYPE.equals(primitiveType)) {
-            return Character.class;
-        }
+
         return primitiveType; // if not primitive, return it as is
     }
 
@@ -375,6 +359,61 @@ public class ReflectionUtils {
         return types;
     }
 
+    /**
+     * Looks for given annotationType on given field or read method for field.
+     *
+     * @param field field to check
+     * @param annotationType Type of annotation you're looking for.
+     * @param <T> the actual type of annotation
+     * @return given annotation if field or read method has this annotation or null.
+     */
+    public static <T extends Annotation> T getAnnotation(Field field, Class<T> annotationType) {
+        return field.getAnnotation(annotationType) == null ? getAnnotationFromReadMethod(getReadMethod(field).orElse(null),
+                annotationType) : field.getAnnotation(annotationType);
+    }
+
+    /**
+     * Checks if field or corresponding read method is annotated with given annotationType.
+     *
+     * @param field Field to check
+     * @param annotationType Annotation you're looking for.
+     * @return true if field or read method it annotated with given annotationType or false.
+     */
+    public static boolean isAnnotationPresent(Field field, Class<? extends Annotation> annotationType) {
+        final Optional<Method> readMethod = getReadMethod(field);
+        return field.isAnnotationPresent(annotationType) || readMethod.isPresent() && readMethod.get().isAnnotationPresent(annotationType);
+    }
+
+    /**
+     * Get the read method for given field.
+     * @param field field to get the read method for.
+     * @return Optional of read method or empty if field has no read method
+     */
+    public static Optional<Method> getReadMethod(Field field) {
+        String fieldName = field.getName();
+        Class<?> fieldClass = field.getDeclaringClass();
+        String capitalizedFieldName = fieldName.substring(0, 1).toUpperCase(ENGLISH) + fieldName.substring(1);
+        // try to find getProperty
+        Optional<Method> getter = getPublicMethod("get" + capitalizedFieldName, fieldClass);
+        if (getter.isPresent()) {
+            return getter;
+        }
+        // try to find isProperty for boolean properties
+        return getPublicMethod("is" + capitalizedFieldName, fieldClass);
+    }
+
+    private static Optional<Method> getPublicMethod(String name, Class<?> target) {
+        try {
+            return Optional.of(target.getMethod(name));
+        } catch (NoSuchMethodException | SecurityException e) {
+            return Optional.empty();
+        }
+    }
+
+    private static <T extends Annotation> T getAnnotationFromReadMethod(Method readMethod, Class<T> clazz) {
+        return readMethod == null ? null : readMethod.getAnnotation(clazz);
+    }
+
     private static List<Type[]> getActualTypeArgumentsOfGenericInterfaces(final Class<?> type) {
         List<Type[]> actualTypeArguments = new ArrayList<>();
         Type[] genericInterfaceTypes = type.getGenericInterfaces();
@@ -432,4 +471,5 @@ public class ReflectionUtils {
         }
         return arguments;
     }
+
 }

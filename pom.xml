@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ The MIT License
   ~
@@ -33,7 +34,7 @@
 
     <groupId>io.github.benas</groupId>
     <artifactId>random-beans-parent</artifactId>
-    <version>3.6.1-SNAPSHOT</version>
+    <version>3.7.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Random Beans</name>
@@ -43,21 +44,21 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <lombok.version>1.16.14</lombok.version>
+        <lombok.version>1.16.16</lombok.version>
         <junit.version>4.12</junit.version>
-        <faker.version>0.12</faker.version>
-        <assertj.version>3.6.2</assertj.version>
+        <faker.version>0.13</faker.version>
+        <assertj.version>3.8.0</assertj.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
-        <joda-time.version>2.9.7</joda-time.version>
-        <spring-context.version>4.3.6.RELEASE</spring-context.version>
+        <joda-time.version>2.9.9</joda-time.version>
+        <spring-context.version>4.3.9.RELEASE</spring-context.version>
         <objenesis.version>2.5.1</objenesis.version>
-        <fast-classpath-scanner.version>2.0.17</fast-classpath-scanner.version>
-        <hibernate-validator.version>5.4.0.Final</hibernate-validator.version>
+        <fast-classpath-scanner.version>2.2.1</fast-classpath-scanner.version>
+        <hibernate-validator.version>5.4.1.Final</hibernate-validator.version>
         <javax.el.version>2.2.6</javax.el.version>
-        <jackson.version>2.8.7</jackson.version>
-        <mockito-core.version>2.7.12</mockito-core.version>
+        <jackson.version>2.8.8.1</jackson.version>
+        <mockito-core.version>2.8.47</mockito-core.version>
         <junit-dataprovider.version>1.12.0</junit-dataprovider.version>
-        <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>2.20</maven-surefire-plugin.version>
         <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
         <maven-cobertura-plugin.version>2.7</maven-cobertura-plugin.version>
         <maven-coveralls-plugin.version>4.3.0</maven-coveralls-plugin.version>
@@ -107,6 +108,14 @@
                 <role>Lead developer</role>
             </roles>
         </developer>
+        <developer>
+            <id>PascalSchumacher</id>
+            <name>Pascal Schumacher</name>
+            <url>https://github.com/PascalSchumacher</url>
+            <roles>
+                <role>Core developer</role>
+            </roles>
+        </developer>
     </developers>
 
     <contributors>
@@ -147,10 +156,6 @@
             <url>https://github.com/feckertson</url>
         </contributor>
         <contributor>
-            <name>Pascal Schumacher</name>
-            <url>https://github.com/PascalSchumacher</url>
-        </contributor>
-        <contributor>
             <name>Rebecca McQuary</name>
             <url>https://github.com/rmcquary</url>
         </contributor>
@@ -181,6 +186,18 @@
         <contributor>
             <name>Petromir Dzhunev</name>
             <url>https://github.com/petromir</url>
+        </contributor>
+        <contributor>
+            <name>de-x</name>
+            <url>http://huningd.github.io</url>
+        </contributor>
+        <contributor>
+            <name>Ryan Dunckel</name>
+            <url>https://github.com/sparty02</url>
+        </contributor>
+        <contributor>
+            <name>Sam Van Overmeire</name>
+            <url>https://github.com/VanOvermeire</url>
         </contributor>
     </contributors>
 
@@ -348,5 +365,38 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>java9</id>
+            <activation>
+                <jdk>9</jdk>
+            </activation>
+            <properties>
+                <argLine>--add-modules java.xml.bind</argLine>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>${maven-compiler-plugin.version}</version>
+                        <configuration>
+                            <verbose>true</verbose>
+                            <source>${java.version}</source>
+                            <target>${java.version}</target>
+                            <showWarnings>true</showWarnings>
+                            <fork>true</fork>
+                            <compilerArgs>
+                                <arg>-verbose</arg>
+                                <arg>-Xlint:unchecked</arg>
+                                <arg>-J--permit-illegal-access</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

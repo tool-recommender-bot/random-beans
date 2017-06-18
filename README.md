@@ -1,3 +1,28 @@
+***
+
+<div align="center">
+    <b><em>Random Beans</em></b><br>
+    Because life is too short to generate random Java&trade; beans by hand..
+</div>
+
+<div align="center">
+
+[![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT)
+[![Coverage Status](https://coveralls.io/repos/benas/random-beans/badge.svg?branch=master&service=github)](https://coveralls.io/github/benas/random-beans?branch=master)
+[![Build Status](https://travis-ci.org/benas/random-beans.svg?branch=master)](https://travis-ci.org/benas/random-beans)
+[![Dependency Status](https://www.versioneye.com/user/projects/56c6d7fa19f173000c237adc/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56c6d7fa19f173000c237adc)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.benas/random-beans/badge.svg?style=flat)](http://repo1.maven.org/maven2/io/github/benas/random-beans/3.6.0/)
+[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/io.github.benas/random-beans/badge.svg)](http://www.javadoc.io/doc/io.github.benas/random-beans)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/benas/random-beans)
+
+</div>
+
+***
+
+## Latest news
+
+* 05/03/2017: Version 3.6.0 is out with new features and bug fixes. See all details in the [change log](https://github.com/benas/random-beans/releases).
+
 # What is Random Beans ?
 
 Random Beans is a library that generates random Java beans. Let's say you have a class `Person` and you want to generate a random instance of it, here we go:
@@ -102,22 +127,44 @@ person.setAddress(address);
 With Random Beans, generating a random `Person` object is done with `random(Person.class)`. The library will **recursively** populate
 all the object graph. That's a big difference!
 
-## Quick links
+## How can this be useful ?
 
-|Item                  |Link                                                                                      |
-|:---------------------|:-----------------------------------------------------------------------------------------|
-|Documentation         | [https://github.com/benas/random-beans/wiki](https://github.com/benas/random-beans/wiki) |
-|Continuous integration| [Build job @ Travis CI](https://travis-ci.org/benas/random-beans)                        |
-|Agile Board           | [Backlog items @ waffle.io](https://waffle.io/benas/random-beans)                        |
-|Code coverage         | [![Coverage Status](https://coveralls.io/repos/benas/random-beans/badge.svg?branch=master&service=github)](https://coveralls.io/github/benas/random-beans?branch=master) |
-|Dependencies          | [![Dependency Status](https://www.versioneye.com/user/projects/56c6d7fa19f173000c237adc/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56c6d7fa19f173000c237adc) |
+Sometimes, the test fixture does not really matter to the test logic. For example, if we want to test the result of a new sorting algorithm,
+ we can generate random input data and assert the output is sorted, regardless of the data itself:
 
-## Current version
+```java
+@org.junit.Test
+public void testSortAlgorithm() {
 
-* The current stable version is `3.5.0` : [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.benas/random-beans/badge.svg?style=flat)](http://search.maven.org/#artifactdetails|io.github.benas|random-beans|3.5.0|)
-* The current development version is `3.6.0-SNAPSHOT` : [![Build Status](https://travis-ci.org/benas/random-beans.svg?branch=master)](https://travis-ci.org/benas/random-beans)
+   // Given
+   int[] ints = aNewEnhancedRandom().nextObject(int[].class);
 
-You can find more details on how to get started [here](https://github.com/benas/random-beans/wiki/Getting-Started).
+   // When
+   int[] sortedInts = myAwesomeSortAlgo.sort(ints);
+
+   // Then
+   assertThat(sortedInts).isSorted(); // fake assertion
+
+}
+```
+
+Another example is testing the persistence of a domain object, we can generate a random domain object, persist it and assert the database contains the same values:
+
+```java
+@org.junit.Test
+public void testPersistPerson() throws Exception {
+   // Given
+   Person person = random(Person.class);
+
+   // When
+   personDao.persist(person);
+
+   // Then
+   assertThat("person_table").column("name").value().isEqualTo(person.getName()); // assretj db
+}
+```
+
+There are many other uses cases where random beans can be useful, you can find a non exhaustive list in the [wiki](https://github.com/benas/random-beans/wiki/use-cases).
 
 ## Contribution
 
@@ -127,53 +174,34 @@ If you believe you found a bug, please use the [issue tracker](https://github.co
 
 If you have any question, suggestion, or feedback, do not hesitate to use the [Gitter channel](https://gitter.im/benas/random-beans) of the project.
 
-## Awesome contributors
+## Core team and contributors
 
-* [Alberto Lagna](https://github.com/alagna)
+#### Core team
+
+* [Mahmoud Ben Hassine](https://github.com/benas)
+* [Pascal Schumacher](https://github.com/PascalSchumacher)
+
+#### Awesome contributors
+
 * [Adriano Machado](https://github.com/ammachado)
+* [Alberto Lagna](https://github.com/alagna)
 * [Dovid Kopel](https://github.com/dovidkopel)
+* [de-x](https://github.com/huningd)
 * [Eric Taix](https://github.com/eric-taix)
+* [euZebe](https://github.com/euzebe)
 * [Fred Eckertson](https://github.com/feckertson)
 * [Jose Manuel Prieto](https://github.com/prietopa)
 * [kermit-the-frog](https://github.com/kermit-the-frog)
+* [Lucas Andersson](https://github.com/LucasAndersson)
 * [Nikola Milivojevic](https://github.com/dziga)
 * [Oleksandr Shcherbyna](https://github.com/sansherbina)
-* [Pascal Schumacher](https://github.com/PascalSchumacher)
+* [Petromir Dzhunev](https://github.com/petromir)
+* [Ryan Dunckel](https://github.com/sparty02)
 * [Rebecca McQuary](https://github.com/rmcquary)
 * [Rémi Alvergnat](http://www.pragmasphere.com)
 * [Rodrigue Alcazar](https://github.com/rodriguealcazar)
+* [Sam Van Overmeire](https://github.com/VanOvermeire)
 * [Valters Vingolds](https://github.com/valters)
 * [Vincent Potucek](https://github.com/punkratz312)
-* [Lucas Andersson](https://github.com/LucasAndersson)
-* [euZebe](https://github.com/euzebe)
-* [Petromir Dzhunev](https://github.com/petromir)
 
 Thank you all for your contributions!
-
-## License
-
-Random Beans is released under the [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT).
-
-```
-The MIT License
-
-Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-```
