@@ -50,6 +50,7 @@ class ObjectFactory {
     private final Objenesis objenesis = new ObjenesisStd();
 
     private boolean scanClasspathForConcreteTypes;
+    private boolean enforceJavaBeanConventions;
 
     <T> T createInstance(final Class<T> type) {
         if (scanClasspathForConcreteTypes && isAbstract(type)) {
@@ -68,15 +69,37 @@ class ObjectFactory {
         }
     }
 
+    // TODO refactor this method
     private <T> T createNewInstance(final Class<T> type) {
-        try {
-            Constructor<T> noArgConstructor = type.getDeclaredConstructor();
-            if (!noArgConstructor.isAccessible()) {
-                noArgConstructor.setAccessible(true);
+            Constructor<T> noArgConstructor = getDefaultConstructor(type);
+            if (noArgConstructor == null) {
+                if (enforceJavaBeanConventions) {
+                    throw new RuntimeException(String.format("Type %s does not provide a public default constructor", type));
+                } else {
+                    return objenesis.newInstance(type);
+                }
+            } else {
+                if (!noArgConstructor.isAccessible()) {
+                    if (enforceJavaBeanConventions) {
+                        throw new RuntimeException(String.format("Type %s does not provide a public default constructor", type));
+                    } else {
+                        noArgConstructor.setAccessible(true);
+                        try {
+                            return noArgConstructor.newInstance();
+                        } catch (Exception e) {
+                            return objenesis.newInstance(type);
+                        }
+                    }
+                }
             }
-            return noArgConstructor.newInstance();
-        } catch (Exception exception) {
-            return objenesis.newInstance(type);
+        return null;
+    }
+
+    private <T> Constructor<T> getDefaultConstructor(final Class<T> type) {
+        try {
+            return type.getDeclaredConstructor();
+        } catch (NoSuchMethodException e) {
+            return null;
         }
     }
 
@@ -99,6 +122,10 @@ class ObjectFactory {
 
     void setScanClasspathForConcreteTypes(boolean scanClasspathForConcreteTypes) {
         this.scanClasspathForConcreteTypes = scanClasspathForConcreteTypes;
+    }
+
+    void setEnforceJavaBeanConventions(boolean enforceJavaBeanConventions) {
+        this.enforceJavaBeanConventions = enforceJavaBeanConventions;
     }
 
     private void rejectUnsupportedTypes(Class<?> type) {

@@ -25,8 +25,11 @@ package io.github.benas.randombeans;
 
 import io.github.benas.randombeans.api.*;
 import io.github.benas.randombeans.randomizers.misc.EnumRandomizer;
+import io.github.benas.randombeans.util.ReflectionUtils;
 
+import java.beans.IntrospectionException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -144,18 +147,26 @@ class EnhancedRandomImpl extends EnhancedRandom {
         return null;
     }
 
-    private <T> void populateFields(final List<Field> fields, final T result, final RandomizationContext context) throws IllegalAccessException {
+    private <T> void populateFields(final List<Field> fields, final T result, final RandomizationContext context) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IntrospectionException {
         for (final Field field : fields) {
             populateField(field, result, context);
         }
     }
 
-    private <T> void populateField(final Field field, final T result, final RandomizationContext context) throws IllegalAccessException {
+    private <T> void populateField(final Field field, final T result, final RandomizationContext context) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IntrospectionException {
         if (!fieldExclusionChecker.shouldBeExcluded(field, context)) {
-            if (!parameters.isOverrideDefaultInitialization() && getFieldValue(result, field) != null && !isPrimitiveFieldWithDefaultValue(result, field)) {
+            if (!parameters.isOverrideDefaultInitialization() && getValue(result, field) != null && !isPrimitiveFieldWithDefaultValue(result, field)) {
               return;
             }
             fieldPopulator.populateField(result, field, context);
+        }
+    }
+
+    private Object getValue(Object object, Field field) throws IllegalAccessException, IntrospectionException, InvocationTargetException {
+        if (parameters.isEnforceJavaBeanConventions()) {
+            return ReflectionUtils.getProperty(object, field);
+        } else {
+            return ReflectionUtils.getFieldValue(object, field);
         }
     }
 
@@ -172,7 +183,9 @@ class EnhancedRandomImpl extends EnhancedRandom {
         this.parameters = parameters;
         super.setSeed(parameters.getSeed());
         fieldPopulator.setScanClasspathForConcreteTypes(parameters.isScanClasspathForConcreteTypes());
+        fieldPopulator.setEnforceJavaBeanConventions(parameters.isEnforceJavaBeanConventions());
         objectFactory.setScanClasspathForConcreteTypes(parameters.isScanClasspathForConcreteTypes());
+        objectFactory.setEnforceJavaBeanConventions(parameters.isEnforceJavaBeanConventions());
     }
 
 }

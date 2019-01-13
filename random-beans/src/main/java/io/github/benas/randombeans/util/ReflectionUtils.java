@@ -29,6 +29,8 @@ import io.github.benas.randombeans.api.ObjectGenerationException;
 import io.github.benas.randombeans.api.Randomizer;
 import lombok.experimental.UtilityClass;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.text.SimpleDateFormat;
@@ -83,14 +85,48 @@ public class ReflectionUtils {
     }
 
     /**
-     * Set a value (accessible or not accessible) in a field of a target object.
+     * Get the value of a (Java Bean) property from a target object.
+     *
+     * @param object instance to get the property from
+     * @param field  property to get the value from
+     * @return value of the property
+     * @throws IllegalAccessException if the property cannot be read (missing getter)
+     */
+    public static Object getProperty(final Object object, final Field field) throws IllegalAccessException, IntrospectionException, InvocationTargetException {
+        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), object.getClass());
+        Method readMethod = propertyDescriptor.getReadMethod();
+        if (readMethod == null) {
+            throw new IllegalAccessException(String.format("Type %s does not provide a getter for property %s", object, field.getName()));
+        }
+        return readMethod.invoke(object);
+    }
+
+    /**
+     * Set a value of a (Java Bean) property on a target object.
+     *
+     * @param object instance to set the property on
+     * @param field  property to set the value on
+     * @param value  value to set
+     * @throws IllegalAccessException if the property cannot be set (missing setter)
+     */
+    public static void setProperty(final Object object, final Field field, final Object value) throws IllegalAccessException, IntrospectionException, InvocationTargetException {
+        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), object.getClass());
+        Method writeMethod = propertyDescriptor.getWriteMethod();
+        if (writeMethod == null) {
+            throw new IllegalAccessException(String.format("Type %s does not provide a setter for property %s", object, field.getName()));
+        }
+        writeMethod.invoke(object, value);
+    }
+
+    /**
+     * Set a value (accessible or not accessible) on a field of a target object.
      *
      * @param object instance to set the property on
      * @param field  field to set the property on
      * @param value  value to set
      * @throws IllegalAccessException if the property cannot be set
      */
-    public static void setProperty(final Object object, final Field field, final Object value) throws IllegalAccessException {
+    public static void setFieldValue(final Object object, final Field field, final Object value) throws IllegalAccessException {
         boolean access = field.isAccessible();
         field.setAccessible(true);
         field.set(object, value);

@@ -48,6 +48,7 @@ public class EnhancedRandomParameters {
     private int randomizationDepth;
     private Charset charset;
     private boolean scanClasspathForConcreteTypes;
+    private boolean enforceJavaBeanConventions;
     private boolean overrideDefaultInitialization;
     private Range<Integer> collectionSizeRange;
     private Range<Integer> stringLengthRange;
@@ -58,6 +59,7 @@ public class EnhancedRandomParameters {
         seed = new Random().nextLong();
         charset = StandardCharsets.US_ASCII;
         scanClasspathForConcreteTypes = false;
+        enforceJavaBeanConventions = false;
         overrideDefaultInitialization = false;
         objectPoolSize = Constants.DEFAULT_OBJECT_POOL_SIZE;
         randomizationDepth = Constants.DEFAULT_RANDOMIZATION_DEPTH;

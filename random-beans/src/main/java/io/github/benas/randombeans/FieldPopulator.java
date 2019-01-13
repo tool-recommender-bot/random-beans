@@ -27,7 +27,9 @@ import io.github.benas.randombeans.api.ObjectGenerationException;
 import io.github.benas.randombeans.api.Randomizer;
 import io.github.benas.randombeans.randomizers.misc.SkipRandomizer;
 
+import java.beans.IntrospectionException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 
 import static io.github.benas.randombeans.util.CollectionUtils.randomElementOf;
@@ -56,6 +58,7 @@ class FieldPopulator {
     private final RandomizerProvider randomizerProvider;
 
     private boolean scanClasspathForConcreteTypes;
+    private boolean enforceJavaBeanConventions;
 
     FieldPopulator(final EnhancedRandomImpl beanPopulator, final RandomizerProvider randomizerProvider,
                    final ArrayPopulator arrayPopulator, final CollectionPopulator collectionPopulator, final MapPopulator mapPopulator) {
@@ -66,7 +69,7 @@ class FieldPopulator {
         this.mapPopulator = mapPopulator;
     }
 
-    void populateField(final Object target, final Field field, final RandomizationContext context) throws IllegalAccessException {
+    void populateField(final Object target, final Field field, final RandomizationContext context) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IntrospectionException {
         Randomizer<?> randomizer = getRandomizer(field);
         if (randomizer instanceof SkipRandomizer) {
             return;
@@ -85,7 +88,11 @@ class FieldPopulator {
                     throw new ObjectGenerationException(exceptionMessage, e);
                 }
             }
-            setProperty(target, field, value);
+            if (enforceJavaBeanConventions) {
+                setProperty(target, field, value);
+            } else {
+                setFieldValue(target, field, value);
+            }
         }
         context.popStackItem();
     }
@@ -127,5 +134,9 @@ class FieldPopulator {
 
     void setScanClasspathForConcreteTypes(boolean scanClasspathForConcreteTypes) {
         this.scanClasspathForConcreteTypes = scanClasspathForConcreteTypes;
+    }
+
+    void setEnforceJavaBeanConventions(boolean enforceJavaBeanConventions) {
+        this.enforceJavaBeanConventions = enforceJavaBeanConventions;
     }
 }

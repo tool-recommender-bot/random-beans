@@ -417,6 +417,19 @@ public class EnhancedRandomBuilder {
     }
 
     /**
+     * Enforce random beans to respect Java Bean conventions: the randomized type should provide
+     * a public no arguments constructor and a getter/setter for each field. If this is not the case,
+     * random beans will fail to create a random instance of the given type.
+     *
+     * @param enforceJavaBeanConventions true if random beans should enforce Java Bean conventions, false otherwise
+     * @return a pre configured {@link EnhancedRandomBuilder} instance
+     */
+    public EnhancedRandomBuilder enforceJavaBeanConventions(boolean enforceJavaBeanConventions) {
+        parameters.setEnforceJavaBeanConventions(enforceJavaBeanConventions);
+        return this;
+    }
+
+    /**
      * Build a {@link EnhancedRandom} instance.
      *
      * @return a configured {@link EnhancedRandom} instance
