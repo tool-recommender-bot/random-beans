@@ -50,6 +50,20 @@ public class BeanValidationTest {
     }
 
     @Test
+    void testBeanValidationWithXmlConfig() {
+        // Generating a valid person according to META-INF/validation/person-validation.xml
+        // means RB should look for this file (through META-INF/validation.xml) and
+        // interpret it.. We can imagine a naming convention Person.class -> person-validation.xml
+        // but this is still not the role of RB.
+        Person person = enhancedRandom.nextObject(Person.class);
+
+        ValidatorFactory validatorFactory = Validation.byDefaultProvider().configure().buildValidatorFactory();
+        Validator validator = validatorFactory.getValidator();
+        Set<ConstraintViolation<Person>> constraintViolations = validator.validate(person, Person.class);
+        assertThat(constraintViolations).isEmpty();
+    }
+
+    @Test
     public void generatedValuesShouldBeValidAccordingToValidationConstraints() {
         BeanValidationAnnotatedBean bean = enhancedRandom.nextObject(BeanValidationAnnotatedBean.class);
 
